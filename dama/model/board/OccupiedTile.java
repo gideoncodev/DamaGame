@@ -2,11 +2,11 @@ package dama.model.board;
 
 import dama.model.pieces.Piece;
 
-public static final class OccupiedTile extends Tile {
+public final class OccupiedTile extends Tile {
 
 	private final Piece pieceOnTile;
 
-	private OccupiedTile(int tileCoordinate, Piece pieceOnTile) {
+	private OccupiedTile(final int tileCoordinate, final Piece pieceOnTile) {
 		super(tileCoordinate);
 		this.pieceOnTile = pieceOnTile;
 	}

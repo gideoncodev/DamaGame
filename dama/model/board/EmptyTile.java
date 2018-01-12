@@ -2,7 +2,7 @@ package dama.model.board;
 
 import dama.model.pieces.Piece;
 
-public static final class EmptyTile extends Tile {
+public final class EmptyTile extends Tile {
 	
 	private EmptyTile(final int tileCoordinate) {
 		super(tileCoordinate);

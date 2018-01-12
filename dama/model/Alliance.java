@@ -2,5 +2,5 @@ package dama.model;
 
 public enum Alliance {
 	WHITE,
-	RED
+	BLACK
 }
