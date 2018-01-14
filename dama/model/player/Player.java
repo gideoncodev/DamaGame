@@ -18,14 +18,15 @@ public abstract class Player {
 		   final Collection<Move> opponentMoves) {
 		this.board = board;
 		this.legalMoves = playerMoves;
-		this.isGameOver = !Player.calculateOpponentMoves(opponentMoves);
+		this.isGameOver = Player.calculateOpponentMoves(opponentMoves).isEmpty();
 	}
 
 	private static Collection<Move> calculateOpponentMoves(final Collection<Move> moves) {
 		final List<Move> attackMoves = new ArrayList<>();
 		for(final Move move : moves) {
-			
+			attackMoves.add(move);
 		}
+		return Collections.unmodifiableList(attackMoves);
 	}
 
 	public boolean isMoveLegal(final Move move) {
