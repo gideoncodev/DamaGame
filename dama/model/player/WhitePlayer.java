@@ -3,11 +3,12 @@ package dama.model.player;
 import dama.model.board.Board;
 import dama.model.board.Move;
 import dama.model.pieces.Piece;
+import dama.model.Alliance;
 
 import java.util.*;
 
 public class WhitePlayer extends Player {
-	WhitePlayer(final Board board,
+	public WhitePlayer(final Board board,
 				final Collection<Move> whiteStandardLegalMoves,
 				final Collection<Move> blackStandardLegalMoves) {
 		super(board, whiteStandardLegalMoves, blackStandardLegalMoves);

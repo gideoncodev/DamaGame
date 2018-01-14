@@ -4,6 +4,8 @@ import dama.model.Alliance;
 import dama.model.pieces.Piece;
 import dama.model.pieces.Dama;
 import dama.model.player.Player;
+import dama.model.player.WhitePlayer;
+import dama.model.player.BlackPlayer;
 
 import java.util.*;
 

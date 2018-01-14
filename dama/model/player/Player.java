@@ -2,6 +2,7 @@ package dama.model.player;
 
 import dama.model.board.Board;
 import dama.model.board.Move;
+import dama.model.board.MoveTransition;
 import dama.model.pieces.Piece;
 import dama.model.Alliance;
 

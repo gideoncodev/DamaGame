@@ -8,7 +8,7 @@ import dama.model.Alliance;
 import java.util.*;
 
 public class BlackPlayer extends Player {
-	BlackPlayer(final Board board,
+	public BlackPlayer(final Board board,
 				final Collection<Move> whiteStandardLegalMoves,
 				final Collection<Move> blackStandardLegalMoves) {
 		super(board, blackStandardLegalMoves, whiteStandardLegalMoves);
