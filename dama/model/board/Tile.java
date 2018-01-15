@@ -25,11 +25,59 @@ public abstract class Tile {
 		return piece != null ? new OccupiedTile(tileCoordinate, piece) : EMPTY_TILES_CACHE.get(tileCoordinate);
 	}
 
-	public Tile(final int tileCoordinate) {
+	private Tile(final int tileCoordinate) {
 		this.tileCoordinate = tileCoordinate;
 	}
 
 	public abstract boolean isTileOccupied();
 
 	public abstract Piece getPiece();
+
+	private static final class EmptyTile extends Tile {
+	
+		private EmptyTile(final int tileCoordinate) {
+			super(tileCoordinate);
+		}
+
+		@Override
+		public String toString() {
+			return "-";
+		}
+
+		@Override
+		public boolean isTileOccupied() {
+			return false;
+		}
+
+		@Override
+		public Piece getPiece() {
+			return null;
+		}
+	}
+
+	private static final class OccupiedTile extends Tile {
+
+		private final Piece pieceOnTile;
+
+		private OccupiedTile(final int tileCoordinate,
+							final Piece pieceOnTile) {
+			super(tileCoordinate);
+			this.pieceOnTile = pieceOnTile;
+		}
+
+		@Override
+		public String toString() {
+			return this.pieceOnTile.getPieceAlliance().isBlack() ? this.pieceOnTile.toString().toLowerCase() : this.pieceOnTile.toString();
+		}
+
+		@Override
+		public boolean isTileOccupied() {
+			return true;
+		}
+
+		@Override
+		public Piece getPiece() {
+			return this.pieceOnTile;
+		}
+	}
 }

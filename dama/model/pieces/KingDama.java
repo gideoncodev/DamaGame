@@ -1,8 +1,7 @@
 package dama.model.pieces;
 
 import dama.model.board.Move;
-import dama.model.board.NormalMove;
-import dama.model.board.AttackMove;
+import dama.model.board.Move.*;
 import dama.model.board.Board;
 import dama.model.board.BoardUtils;
 import dama.model.board.Tile;
@@ -52,6 +51,11 @@ public class KingDama extends Piece {
 
 		return Collections.unmodifiableList(legalMoves);
 
+	}
+
+	@Override
+	public KingDama movePiece(Move move) {
+		return new KingDama(move.getDestinationCoordinate(), move.getMovedPiece().getPieceAlliance());
 	}
 
 	@Override

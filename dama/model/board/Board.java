@@ -7,6 +7,8 @@ import dama.model.player.Player;
 import dama.model.player.WhitePlayer;
 import dama.model.player.BlackPlayer;
 
+import com.google.common.collect.Iterables;
+
 import java.util.*;
 
 public class Board {
@@ -17,6 +19,7 @@ public class Board {
 
 	private final WhitePlayer whitePlayer;
 	private final BlackPlayer blackPlayer;
+	private final Player currentPlayer;
 
 	private Board(final Builder builder) {
 		this.gameBoard = createGameBoard(builder);
@@ -28,6 +31,7 @@ public class Board {
 
 		this.whitePlayer = new WhitePlayer(this, whiteStandardLegalMove, blackStandardLegalMove);
 		this.blackPlayer = new BlackPlayer(this, whiteStandardLegalMove, blackStandardLegalMove);
+		this.currentPlayer = builder.nextMoveMaker.choosePlayer(this.whitePlayer, this.blackPlayer);
 	}
 	
 	public Tile getTile(final int tileCoordinate) {
@@ -57,6 +61,10 @@ public class Board {
 		}
 
 		return builder.toString();
+	}
+
+	public Player getCurrentPlayer() {
+		return this.currentPlayer;
 	}
 
 	public Player getPlayer(final Alliance alliance) {
@@ -91,6 +99,10 @@ public class Board {
 		}
 
 		return Collections.unmodifiableList(legalMoves);
+	}
+
+	public Iterable<Move> getAllLegalMoves() {
+		return Iterables.unmodifiableIterable(Iterables.concat(this.whitePlayer.getLegalMoves(), this.blackPlayer.getLegalMoves()));
 	}
 
 	public static Board createStandardBoard() {

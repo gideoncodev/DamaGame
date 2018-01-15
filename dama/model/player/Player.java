@@ -3,6 +3,7 @@ package dama.model.player;
 import dama.model.board.Board;
 import dama.model.board.Move;
 import dama.model.board.MoveTransition;
+import dama.model.board.MoveStatus;
 import dama.model.pieces.Piece;
 import dama.model.Alliance;
 
@@ -22,6 +23,10 @@ public abstract class Player {
 		this.isGameOver = Player.calculateOpponentMoves(opponentMoves).isEmpty();
 	}
 
+	public Collection<Move> getLegalMoves() {
+		return this.legalMoves;
+	}
+
 	private static Collection<Move> calculateOpponentMoves(final Collection<Move> moves) {
 		final List<Move> attackMoves = new ArrayList<>();
 		for(final Move move : moves) {
@@ -38,8 +43,30 @@ public abstract class Player {
 		return this.isGameOver;
 	}
 
+	// TODO check for stalemate status 
+	public boolean isStaleMate() {
+		return false;
+	}
+
+	public boolean hasMoves() {
+		return false;
+	}
+
 	public MoveTransition makeMove(final Move move) {
-		return null;
+
+		if(!isMoveLegal(move)) {
+			return new MoveTransition(this.board, move, MoveStatus.ILLEGAL_MOVE);
+		}
+
+		final Board transitionBoard = move.execute();
+
+		final Collection<Move> damaAttacks = Player.calculateOpponentMoves(transitionBoard.getCurrentPlayer().getOpponent().getLegalMoves());
+
+		if(!damaAttacks.isEmpty()) {
+			return new MoveTransition(this.board, move, MoveStatus.LEAVE_PLAYER_IN_CHECK);
+		}
+
+		return new MoveTransition(transitionBoard, move, MoveStatus.DONE);
 	}
 
 	public abstract Collection<Piece> getActivePieces();
