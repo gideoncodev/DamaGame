@@ -1,6 +1,9 @@
 package dama;
 
 import dama.model.board.Board;
+import dama.view.GameBoard;
+
+import javax.swing.*;
 
 public class DamaGame {
 
@@ -8,6 +11,12 @@ public class DamaGame {
 		Board board = Board.createStandardBoard();
 
 		System.out.println(board);
+
+		SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                new GameBoard();
+            }
+        });
 	}
 
 }

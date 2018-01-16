@@ -35,6 +35,17 @@ public abstract class Player {
 		return Collections.unmodifiableList(attackMoves);
 	}
 
+	// static Collection<Move> calculateAttacksOnTile(final int tile,
+ //                                                   final Collection<Move> moves) {
+ //        final List<Move> attackMoves = new ArrayList<>();
+ //        for (final Move move : moves) {
+ //            if (tile == move.getDestinationCoordinate()) {
+ //                attackMoves.add(move);
+ //            }
+ //        }
+ //        return ImmutableList.copyOf(attackMoves);
+ //    }
+
 	public boolean isMoveLegal(final Move move) {
 		return this.legalMoves.contains(move);
 	}

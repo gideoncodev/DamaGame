@@ -1,6 +1,7 @@
 package dama.model.board;
 
 import dama.model.pieces.Piece;
+import dama.model.board.Board.Builder;
 
 public abstract class Move {
 
@@ -45,7 +46,7 @@ public abstract class Move {
 	}
 
 	public int getCurrentCoordinate(){
-		this.movedPiece.getPiecePosition();
+		return this.movedPiece.getPiecePosition();
 	}
 
 	public int getDestinationCoordinate() {
@@ -65,7 +66,7 @@ public abstract class Move {
 	}
 
 	public Board execute() {
-		final Board.Builder builder = new Board.Builder();
+		final Builder builder = new Builder();
 
 		for(final Piece piece : this.board.getCurrentPlayer().getActivePieces()) {
 			if(!this.movedPiece.equals(piece)) {

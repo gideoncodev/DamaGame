@@ -2,6 +2,8 @@ package dama.model.board;
 
 import dama.model.pieces.Piece;
 
+import com.google.common.collect.ImmutableMap;
+
 import java.util.*;
 
 public abstract class Tile {
@@ -18,7 +20,7 @@ public abstract class Tile {
 			emptyTileMap.put(i, new EmptyTile(i));
 		}
 
-		return Collections.unmodifiableMap(emptyTileMap);
+		return ImmutableMap.copyOf(emptyTileMap);
 	}
 
 	public static Tile createTile(final int tileCoordinate, final Piece piece) {
@@ -33,6 +35,10 @@ public abstract class Tile {
 
 	public abstract Piece getPiece();
 
+	public int getTileCoordinate() {
+		return this.tileCoordinate;
+	}
+	
 	private static final class EmptyTile extends Tile {
 	
 		private EmptyTile(final int tileCoordinate) {

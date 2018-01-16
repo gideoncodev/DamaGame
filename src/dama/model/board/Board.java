@@ -8,10 +8,11 @@ import dama.model.player.WhitePlayer;
 import dama.model.player.BlackPlayer;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.ImmutableList;
 
 import java.util.*;
 
-public class Board {
+public final class Board {
 
 	private final List<Tile> gameBoard;
 	private final Collection<Piece> whitePieces;
@@ -31,7 +32,7 @@ public class Board {
 
 		this.whitePlayer = new WhitePlayer(this, whiteStandardLegalMove, blackStandardLegalMove);
 		this.blackPlayer = new BlackPlayer(this, whiteStandardLegalMove, blackStandardLegalMove);
-		this.currentPlayer = builder.nextMoveMaker.choosePlayer(this.whitePlayer, this.blackPlayer);
+		this.currentPlayer = null;//builder.nextMoveMaker.choosePlayer(this.whitePlayer, this.blackPlayer);
 	}
 	
 	public Tile getTile(final int tileCoordinate) {
@@ -45,7 +46,7 @@ public class Board {
 			tiles[i] = Tile.createTile(i, builder.boardConfig.get(i));
 		}
 
-		return Collections.unmodifiableList(Arrays.asList(tiles));
+		return ImmutableList.copyOf(tiles);
 	}
 
 	@Override
@@ -87,7 +88,7 @@ public class Board {
 			}
 		}
 
-		return Collections.unmodifiableList(activePieces);
+		return ImmutableList.copyOf(activePieces);
 	}
 
 	private Collection<Move> calculateLegalMoves(final Collection<Piece> pieces) {
@@ -98,7 +99,7 @@ public class Board {
 			legalMoves.addAll(piece.calculateLegalMoves(this));
 		}
 
-		return Collections.unmodifiableList(legalMoves);
+		return ImmutableList.copyOf(legalMoves);
 	}
 
 	public Iterable<Move> getAllLegalMoves() {
