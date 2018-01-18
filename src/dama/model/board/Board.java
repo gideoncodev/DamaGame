@@ -32,7 +32,7 @@ public final class Board {
 
 		this.whitePlayer = new WhitePlayer(this, whiteStandardLegalMove, blackStandardLegalMove);
 		this.blackPlayer = new BlackPlayer(this, whiteStandardLegalMove, blackStandardLegalMove);
-		this.currentPlayer = null;//builder.nextMoveMaker.choosePlayer(this.whitePlayer, this.blackPlayer);
+		this.currentPlayer = builder.nextMoveMaker.choosePlayer(this.whitePlayer, this.blackPlayer);
 	}
 	
 	public Tile getTile(final int tileCoordinate) {
@@ -136,6 +136,8 @@ public final class Board {
 		builder.setPiece(new Dama(58, Alliance.WHITE));
 		builder.setPiece(new Dama(60, Alliance.WHITE));
 		builder.setPiece(new Dama(62, Alliance.WHITE));
+
+		builder.setMoveMaker(Alliance.WHITE);
 
 		return builder.build();
 	}

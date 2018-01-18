@@ -7,6 +7,8 @@ import dama.model.board.BoardUtils;
 import dama.model.board.Tile;
 import dama.model.Alliance;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.*;
 
 public class KingDama extends Piece {
@@ -49,7 +51,7 @@ public class KingDama extends Piece {
 			}
 		}
 
-		return Collections.unmodifiableList(legalMoves);
+		return ImmutableList.copyOf(legalMoves);
 
 	}
 
@@ -64,10 +66,10 @@ public class KingDama extends Piece {
 	}
 
 	private static boolean isFirstColumnExclusion(final int currentPosition, final int candidateOffset) {
-		return BoardUtils.FIRST_COLUMN[currentPosition] && (candidateOffset == -9 || candidateOffset == 7);
+		return BoardUtils.FIRST_COLUMN.get(currentPosition) && (candidateOffset == -9 || candidateOffset == 7);
 	}
 
 	private static boolean isLastColumnExclusion(final int currentPosition, final int candidateOffset) {
-		return BoardUtils.LAST_COLUMN[currentPosition] && (candidateOffset == -7 || candidateOffset == 9);
+		return BoardUtils.LAST_COLUMN.get(currentPosition) && (candidateOffset == -7 || candidateOffset == 9);
 	}
 }

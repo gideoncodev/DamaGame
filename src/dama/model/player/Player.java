@@ -7,6 +7,8 @@ import dama.model.board.MoveStatus;
 import dama.model.pieces.Piece;
 import dama.model.Alliance;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.*;
 
 public abstract class Player {
@@ -32,7 +34,7 @@ public abstract class Player {
 		for(final Move move : moves) {
 			attackMoves.add(move);
 		}
-		return Collections.unmodifiableList(attackMoves);
+		return ImmutableList.copyOf(attackMoves);
 	}
 
 	// static Collection<Move> calculateAttacksOnTile(final int tile,
@@ -71,11 +73,11 @@ public abstract class Player {
 
 		final Board transitionBoard = move.execute();
 
-		final Collection<Move> damaAttacks = Player.calculateOpponentMoves(transitionBoard.getCurrentPlayer().getOpponent().getLegalMoves());
+		// final Collection<Move> damaAttacks = Player.calculateOpponentMoves(transitionBoard.getCurrentPlayer().getOpponent().getLegalMoves());
 
-		if(!damaAttacks.isEmpty()) {
-			return new MoveTransition(this.board, move, MoveStatus.LEAVE_PLAYER_IN_CHECK);
-		}
+		// if(!damaAttacks.isEmpty()) {
+		// 	return new MoveTransition(this.board, move, MoveStatus.LEAVE_PLAYER_IN_CHECK);
+		// }
 
 		return new MoveTransition(transitionBoard, move, MoveStatus.DONE);
 	}
