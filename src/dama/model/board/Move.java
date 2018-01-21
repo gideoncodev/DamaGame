@@ -2,12 +2,13 @@ package dama.model.board;
 
 import dama.model.pieces.Piece;
 import dama.model.board.Board.Builder;
+import dama.model.board.BoardUtils;
 
 public abstract class Move {
 
-	final Board board;
-	final Piece movedPiece;
-	final int destinationCoordinate;
+	protected final Board board;
+	protected final Piece movedPiece;
+	protected final int destinationCoordinate;
 
 	public static final Move NULL_MOVE = new NullMove();
 
@@ -19,6 +20,13 @@ public abstract class Move {
 		this.destinationCoordinate = destinationCoordinate;
 	}
 
+	private Move(final Board board,
+				final int destinationCoordinate) {
+		this.board = board;
+		this.movedPiece = null;
+		this.destinationCoordinate = destinationCoordinate;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -26,6 +34,7 @@ public abstract class Move {
 
 		result = prime * result + this.destinationCoordinate;
 		result = prime * result + this.movedPiece.hashCode();
+		result = prime * result + this.movedPiece.getPiecePosition();
 		
 		return result;
 	}
@@ -41,7 +50,8 @@ public abstract class Move {
 		}
 
 		final Move otherMove = (Move) other;
-		return this.getDestinationCoordinate() == otherMove.getDestinationCoordinate() &&
+		return this.getCurrentCoordinate() == otherMove.getCurrentCoordinate() &&
+			   this.getDestinationCoordinate() == otherMove.getDestinationCoordinate() &&
 			   this.getMovedPiece().equals(otherMove.getMovedPiece());
 	}
 
@@ -93,6 +103,16 @@ public abstract class Move {
 			super(board, movedPiece, destinationCoordinate);
 		}
 
+		@Override
+		public boolean equals(final Object other) {
+			return this == other || other instanceof NormalMove && super.equals(other);
+		}
+
+		@Override
+		public String toString() {
+			return this.movedPiece.getPieceType().toString() + BoardUtils.getCoordinateAtPosition(this.destinationCoordinate);
+		}
+
 	}
 
 	public static final class AttackMove extends Move {
@@ -123,7 +143,8 @@ public abstract class Move {
 			}
 
 			final AttackMove otherAttackMove = (AttackMove) other;
-			return super.equals(otherAttackMove) && this.getAttackedPiece().equals(otherAttackMove.getAttackedPiece());
+			return super.equals(otherAttackMove) &&
+				   this.getAttackedPiece().equals(otherAttackMove.getAttackedPiece());
 		}
 
 		@Override
@@ -134,6 +155,28 @@ public abstract class Move {
 		@Override
 		public Piece getAttackedPiece() {
 			return this.attackedPiece;
+		}
+
+		@Override
+		public Board execute() {
+			final Builder builder = new Builder();
+
+			for(final Piece piece : this.board.getCurrentPlayer().getActivePieces()) {
+				if(!this.movedPiece.equals(piece)) {
+					builder.setPiece(piece);
+				}
+			}
+
+			for(final Piece piece : this.board.getCurrentPlayer().getOpponent().getActivePieces()) {
+				builder.setPiece(piece);
+			}
+
+			builder.setPiece(this.movedPiece.movePiece(this));
+			builder.removePiece(this.attackedPiece);
+			builder.setMoveMaker(this.board.getCurrentPlayer().getOpponent().getAlliance());
+
+
+			return builder.build();
 		}
 
 	}

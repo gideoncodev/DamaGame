@@ -156,6 +156,11 @@ public final class Board {
 			return this;
 		}
 
+		public Builder removePiece(final Piece piece) {
+			this.boardConfig.remove(piece.getPiecePosition());
+			return this;
+		}
+
 		public Builder setMoveMaker(final Alliance nextMoveMaker) {
 			this.nextMoveMaker = nextMoveMaker;
 			return this;

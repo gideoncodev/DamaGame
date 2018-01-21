@@ -5,10 +5,13 @@ import dama.controller.menu.PreferencesMenuListener.*;
 import dama.controller.board.TileListener;
 import dama.model.board.BoardUtils;
 import dama.model.board.Board;
+import dama.model.board.Move;
 import dama.model.board.Tile;
 import dama.model.pieces.Piece;
+import dama.model.Alliance;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableList;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +25,10 @@ import javax.imageio.ImageIO;
 public class GameBoard {
 
 	private final JFrame gameFrame;
+	private final TakenPiecesPanel takenPiecesPanel;
 	private final BoardPanel boardPanel;
+	private final MoveLog moveLog;
+
 	private Board damaBoard;
 
 	private Tile sourceTile;
@@ -30,13 +36,13 @@ public class GameBoard {
 	private Piece humanMovedPiece;
 	private BoardDirection boardDirection;
 
-	private final static Dimension OUTER_FRAME_DIMENSION = new Dimension(600,600);
+	private final static Dimension OUTER_FRAME_DIMENSION = new Dimension(700,600);
 	private final static Dimension BOARD_PANEL_DIMENSION = new Dimension(400, 350);
 	private final static Dimension TILE_PANEL_DIMENSION = new Dimension(10, 10);
 	private final static String defaultPieceImagePath = "src/dama/view/images/";
 
-	private final Color lightTileColor = Color.decode("#F4F6F4");
-    private final Color darkTileColor = Color.decode("#0C6B09");
+	private final Color lightTileColor = Color.decode("#FFEEBB");
+    private final Color darkTileColor = Color.decode("#558822");
 
 	public GameBoard() {
 
@@ -51,9 +57,12 @@ public class GameBoard {
 		this.boardPanel = new BoardPanel();
 		this.boardDirection = BoardDirection.NORMAL;
 		this.gameFrame.add(this.boardPanel, BorderLayout.CENTER);
+		this.moveLog = new MoveLog();
+		this.takenPiecesPanel = new TakenPiecesPanel();
+		this.gameFrame.add(this.takenPiecesPanel, BorderLayout.EAST);
 
 		this.gameFrame.pack();
-		this.gameFrame.setSize(OUTER_FRAME_DIMENSION);
+		this.gameFrame.setPreferredSize(OUTER_FRAME_DIMENSION);
 		this.gameFrame.setVisible(true);
 	}
 
@@ -83,6 +92,14 @@ public class GameBoard {
 
 	public Piece getHumanMovedPiece() {
 		return this.humanMovedPiece;
+	}
+
+	public TakenPiecesPanel getTakenPiecesPanel() {
+		return this.takenPiecesPanel;
+	}
+
+	public MoveLog getMoveLog() {
+		return this.moveLog;
 	}
 
 	public void setSourceTile(final Tile sourceTile) {
@@ -217,24 +234,59 @@ public class GameBoard {
 		}
 	}
 
+	public static class MoveLog {
+		private final List<Move> moves;
+
+		MoveLog() {
+			this.moves = new ArrayList<>();
+		}
+
+		public List<Move> getMoves() {
+			return this.moves;
+		}
+
+		public void addMove(final Move move) {
+			this.moves.add(move);
+		}
+
+		public int size() {
+			return this.moves.size();
+		}
+
+		public void clear() {
+			this.moves.clear();
+		}
+
+		public Move removeMove(final int moveIndex) {
+			return this.moves.remove(moveIndex);
+		}
+	}
+
 	public class TilePanel extends JPanel {
 		private final int tileId;
 		private BoardPanel boardPanel;
+		private Collection<Move> humanPieceLegalMoves;
 
 		TilePanel(final BoardPanel boardPanel,
 				  final int tileId) {
-			super(new GridBagLayout());
+			super(new GridLayout(1,1));
 			this.tileId = tileId;
 			this.boardPanel = boardPanel;
+			this.humanPieceLegalMoves = new ArrayList<>();
 			this.setPreferredSize(TILE_PANEL_DIMENSION);
 			this.assignTileColor();
 			this.assignTilePieceIcon(damaBoard);
+			this.highlightLegalMoves(damaBoard);
 			this.addMouseListener(new TileListener());
 			this.validate();
 		}
 
 		public final int getTileId() {
 			return this.tileId;
+		}
+
+		public Collection<Move> getHumanPieceLegalMoves() {
+			return this.humanPieceLegalMoves;
 		}
 
 		public Tile getFrameSourceTile() {
@@ -269,28 +321,87 @@ public class GameBoard {
 			return this.boardPanel;
 		}
 
+		public TakenPiecesPanel getFrameTakenPiecesPanel() {
+			return GameBoard.this.getTakenPiecesPanel();
+		}
+
+		public MoveLog getFrameMoveLog() {
+			return GameBoard.this.getMoveLog();
+		}
+
 		public void setFrameDamaBoard(final Board board) {
 			GameBoard.this.damaBoard = board;
+		}
+
+		public BoardDirection getFrameBoardDirection() {
+			return GameBoard.this.getBoardDirection();
+		}
+		public void setFrameBoardDirection(final BoardDirection boardDirection) {
+			GameBoard.this.setBoardDirection(boardDirection);
 		}
 
 		public void drawTile(final Board board) {
 			this.assignTileColor();
 			this.assignTilePieceIcon(board);
+			this.highlightLegalMoves(board);
+		}
+
+		private void highlightLegalMoves(final Board board) {
+			for(final Move move : pieceLegalMoves(board)) {
+				if(move.getDestinationCoordinate() == this.tileId) {
+					this.humanPieceLegalMoves.add(move);
+					this.add(new DamaIconHighlightLegalMoves(this.getFrameHumanMovedPiece().getPieceAlliance()));
+				}
+			}
+		}
+
+		private Collection<Move> pieceLegalMoves(final Board board) {
+			if(this.getFrameHumanMovedPiece() != null &&
+			   this.getFrameHumanMovedPiece().getPieceAlliance() == board.getCurrentPlayer().getAlliance()) {
+				return this.getFrameHumanMovedPiece().calculateLegalMoves(board);
+			}
+			return Collections.emptyList();
 		}
 
 		public void assignTilePieceIcon(final Board board) {
 			this.removeAll();
 			if(board.getTile(this.tileId).isTileOccupied()) {
-				try {
-					BufferedImage image = ImageIO.read(new File(defaultPieceImagePath +
-                            board.getTile(this.tileId).getPiece().getPieceAlliance().toString().substring(0, 1) + "" +
-                            board.getTile(this.tileId).getPiece().toString() +
-                            ".png"));
-					final Image imageIcon = image.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
-					this.add(new JLabel(new ImageIcon(imageIcon)));
-				} catch(IOException e) {
-					e.printStackTrace();
-				}
+				this.add(new DamaIconLabel(board.getTile(this.tileId).getPiece().getPieceAlliance()));
+			}
+		}
+
+		private class DamaIconLabel extends JLabel {
+			private Alliance alliance;
+
+			DamaIconLabel(final Alliance alliance) {
+				super();
+				this.alliance = alliance;
+			}
+
+			@Override
+			public void paintComponent(Graphics g) {
+				super.paintComponent(g);
+				Color pieceColor = this.alliance.isBlack() ? Color.decode("#242424") : Color.decode("#FFF9F4");
+				g.setColor(pieceColor);
+				g.fillOval(7, 7, this.getSize().width - 14, this.getSize().height - 14);
+			}
+		}
+
+		private class DamaIconHighlightLegalMoves extends JLabel {
+			private Alliance alliance;
+
+			DamaIconHighlightLegalMoves(final Alliance alliance) {
+				super();
+				this.alliance = alliance;
+			}
+
+			@Override
+			public void paintComponent(Graphics g) {
+				Graphics2D g2 = (Graphics2D) g;
+				Color pieceColor = this.alliance.isBlack() ? Color.decode("#242424") : Color.decode("#FFF9F4");
+				g2.setColor(pieceColor);
+				g2.setStroke(new BasicStroke(3));
+				g2.drawOval(7, 7, this.getSize().width - 14, this.getSize().height - 14);
 			}
 		}
 
