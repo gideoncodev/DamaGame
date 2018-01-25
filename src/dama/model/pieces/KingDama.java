@@ -44,7 +44,9 @@ public class KingDama extends Piece {
 						final Alliance pieceAlliance = pieceAtDestination.getPieceAlliance();
 
 						if(this.pieceAlliance != pieceAlliance) {
-							legalMoves.add(new AttackMove(board, this, candidateDestinationCoordinate, pieceAtDestination));
+							List<Piece> candidateAttackedPieces = new ArrayList<>();
+							candidateAttackedPieces.add(pieceAtDestination);
+							legalMoves.add(new AttackMove(board, this, candidateDestinationCoordinate, candidateAttackedPieces));
 						}
 					}
 				}

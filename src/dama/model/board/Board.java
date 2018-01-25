@@ -75,7 +75,6 @@ public final class Board {
 	}
 
 	public Player getCurrentPlayer() {
-		if(this.currentPlayer == null) System.out.println("Null Pointer");
 		return this.currentPlayer;		
 	}
 

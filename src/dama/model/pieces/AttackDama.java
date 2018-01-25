@@ -31,8 +31,8 @@ public class AttackDama extends Piece {
 
 		for(final int candidateCoordinateOffset : CANDIDATE_MOVE_COORDINATES) {
 
-			if(!(isFirstColumnExclusion(this.piecePosition, candidateCoordinateOffset) &&
-				isLastColumnExclusion(this.piecePosition, candidateCoordinateOffset))) continue;
+			if(isFirstColumnExclusion(this.piecePosition, candidateCoordinateOffset) ||
+				isLastColumnExclusion(this.piecePosition, candidateCoordinateOffset)) continue;
 
 			final int candidateCoordinate = this.piecePosition + (this.pieceAlliance.getDirections() * candidateCoordinateOffset);
 			final Tile candidateDestinationTile = board.getTile(candidateCoordinate);
@@ -42,8 +42,7 @@ public class AttackDama extends Piece {
 				final int attackCandidateDestinationCoordinate = candidateCoordinate +
 																 (this.pieceAlliance.getDirections() * candidateCoordinateOffset);
 				final Tile candidateAttackDestinationTile = board.getTile(attackCandidateDestinationCoordinate);
-
-				if(this.pieceAlliance != pieceAlliance && !BoardUtils.isTileOnTheEdge(candidateAttackPiece.getPiecePosition())) {
+				if(this.pieceAlliance != alliance && !BoardUtils.isTileOnTheEdge(candidateAttackPiece.getPiecePosition())) {
 					if(BoardUtils.isValidTileCoordinate(attackCandidateDestinationCoordinate) &&
 					   !candidateAttackDestinationTile.isTileOccupied()) {
 					   	this.attackedPieces.add(candidateAttackPiece);

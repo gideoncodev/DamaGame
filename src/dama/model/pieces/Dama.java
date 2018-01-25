@@ -55,28 +55,28 @@ public class Dama extends Piece {
 					if(this.pieceAlliance != pieceAlliance && !BoardUtils.isTileOnTheEdge(candidateAttackPiece.getPiecePosition())) {
 						if(BoardUtils.isValidTileCoordinate(attackCandidateDestinationCoordinate) &&
 						   !candidateAttackDestinationTile.isTileOccupied()) {
-								legalMoves.add(new AttackMove(board, this, attackCandidateDestinationCoordinate, candidateAttackPiece));
+
+						   	List<Piece> candidateAttackedPieces = new ArrayList<>();
+							candidateAttackedPieces.add(candidateAttackPiece);
+
+							legalMoves.add(new AttackMove(board, this, attackCandidateDestinationCoordinate, candidateAttackedPieces));
 							//check for additional attack moves
 							List<Move> legalAttackMoves = new ArrayList<>();
-							boolean isFirstTransition = true;
-							do {
-								if(isFirstTransition) {
-									List<Piece> candidateAttackedPieces = new ArrayList<>();
-									candidateAttackedPieces.add(candidateAttackPiece);
-									Move move = new AdditionalAttackMove(board, this, attackCandidateDestinationCoordinate, candidateAttackedPieces);
-									Board transitionBoard = move.execute();
-									AttackDama attackDama = new AttackDama(attackCandidateDestinationCoordinate, this.pieceAlliance, candidateAttackedPieces);
+							Move checkMove = new AdditionalAttackMove(board, this, attackCandidateDestinationCoordinate, candidateAttackedPieces);
+							AttackDama checkAttackDama = new AttackDama(attackCandidateDestinationCoordinate, this.pieceAlliance, candidateAttackedPieces);
+							legalAttackMoves.addAll(checkAttackDama.calculateLegalMoves(checkMove.execute()));
 
-									final List<Move> legalAttackMoves.addAll(attackDama.calculateLegalMoves(transitionBoard));
-									for(final Move move : )
-									isFirstTransition = false;
-								} else {
+							while(!legalAttackMoves.isEmpty()) {
+								final List<Move> addLegalAttackMoves = new ArrayList<>();
+								addLegalAttackMoves.addAll(legalAttackMoves);
+								legalAttackMoves.clear();
 
+								for(final Move move : addLegalAttackMoves) {
+									legalMoves.add(new AttackMove(board, this, move.getDestinationCoordinate(), move.getAttackedPieces()));
+									AttackDama attackDama = new AttackDama(move.getDestinationCoordinate(), this.pieceAlliance, move.getAttackedPieces());
+									legalAttackMoves.addAll(attackDama.calculateLegalMoves(move.execute()));
 								}
-								
-
-								System.out.println(transitionBoard);
-							} while(!legalAttackMoves.isEmpty());
+							}
 							
 						}
 
