@@ -4,6 +4,9 @@ import dama.model.pieces.Piece;
 import dama.model.board.Board.Builder;
 import dama.model.board.BoardUtils;
 
+import java.util.List;
+import java.util.ArrayList;
+
 public abstract class Move {
 
 	protected final Board board;
@@ -72,6 +75,10 @@ public abstract class Move {
 	}
 
 	public Piece getAttackedPiece() {
+		return null;
+	}
+
+	public List<Piece> getAttackedPieces() {
 		return null;
 	}
 
@@ -168,15 +175,152 @@ public abstract class Move {
 			}
 
 			for(final Piece piece : this.board.getCurrentPlayer().getOpponent().getActivePieces()) {
-				builder.setPiece(piece);
+				if(!this.attackedPiece.equals(piece)) {
+					builder.setPiece(piece);
+				}
 			}
 
 			builder.setPiece(this.movedPiece.movePiece(this));
-			builder.removePiece(this.attackedPiece);
 			builder.setMoveMaker(this.board.getCurrentPlayer().getOpponent().getAlliance());
 
 
 			return builder.build();
+		}
+
+	}
+
+	public static final class AddedAttackMove extends Move {
+
+		final List<Piece> attackedPieces;
+
+		public AddedAttackMove(final Board board,
+						  final Piece movedPiece,
+						  final int destinationCoordinate,
+						  final List<Piece> attackedPieces) {
+			super(board, movedPiece, destinationCoordinate);
+			this.attackedPieces = new ArrayList<>();
+			this.attackedPieces.addAll(attackedPieces);
+		}
+
+		@Override
+		public int hashCode() {
+			return this.attackedPieces.hashCode() + super.hashCode();
+		}
+
+		@Override
+		public boolean equals(final Object other) {
+			if(this == other) {
+				return true;
+			}
+
+			if(!(other instanceof AttackMove)) {
+				return false;
+			}
+
+			final AddedAttackMove otherAttackMove = (AddedAttackMove) other;
+			return super.equals(otherAttackMove) &&
+				   this.getAttackedPiece().equals(otherAttackMove.getAttackedPiece());
+		}
+
+		@Override
+		public boolean isAttack() {
+			return true;
+		}
+
+		@Override
+		public List<Piece> getAttackedPieces() {
+			return this.attackedPieces;
+		}
+
+		@Override
+		public Board execute() {
+			final Builder builder = new Builder();
+
+			for(final Piece piece : this.board.getCurrentPlayer().getActivePieces()) {
+				if(!this.movedPiece.equals(piece)){
+					builder.setPiece(piece);
+				}
+			}
+
+			for(final Piece piece : this.board.getCurrentPlayer().getOpponent().getActivePieces()) {
+				if(!this.attackedPieces.contains(piece)){
+					builder.setPiece(piece);
+				}
+			}
+
+			builder.setPiece(this.movedPiece.movePiece(this));
+			builder.setMoveMaker(this.board.getCurrentPlayer().getOpponent().getAlliance());
+
+
+			return builder.build();
+		}
+
+	}
+
+	public static final class AdditionalAttackMove extends Move {
+
+		final List<Piece> attackedPieces;
+
+		public AdditionalAttackMove(final Board board,
+						  final Piece movedPiece,
+						  final int destinationCoordinate,
+						  final List<Piece> attackedPieces) {
+			super(board, movedPiece, destinationCoordinate);
+			this.attackedPieces = new ArrayList<>();
+			this.attackedPieces.addAll(attackedPieces);
+		}
+
+		@Override
+		public int hashCode() {
+			return this.attackedPieces.hashCode() + super.hashCode();
+		}
+
+		@Override
+		public boolean equals(final Object other) {
+			if(this == other) {
+				return true;
+			}
+
+			if(!(other instanceof AttackMove)) {
+				return false;
+			}
+
+			final AdditionalAttackMove otherAttackMove = (AdditionalAttackMove) other;
+			return super.equals(otherAttackMove) &&
+				   this.getAttackedPiece().equals(otherAttackMove.getAttackedPiece());
+		}
+
+		@Override
+		public boolean isAttack() {
+			return true;
+		}
+
+		@Override
+		public List<Piece> getAttackedPieces() {
+			return this.attackedPieces;
+		}
+
+		@Override
+		public Board execute() {
+			final Builder builder = new Builder();
+
+			for(final Piece piece : this.board.getActivePieces(this.movedPiece.getPieceAlliance())) {
+				if(!this.movedPiece.equals(piece)){
+					builder.setPiece(piece);
+				}
+			}
+
+			for(final Piece piece : this.board.getActivePieces(this.movedPiece.getPieceAlliance().opposite())) {
+				if(!this.attackedPieces.contains(piece)){
+					builder.setPiece(piece);
+				}
+			}
+
+			builder.setPiece(this.movedPiece.movePiece(this));
+			builder.setMoveMaker(this.movedPiece.getPieceAlliance());
+
+
+			return builder.build(true);
 		}
 
 	}

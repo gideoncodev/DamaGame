@@ -3,6 +3,7 @@ package dama.model.pieces;
 import dama.model.board.Move;
 import dama.model.board.Move.*;
 import dama.model.board.Board;
+import dama.model.board.Board.Builder;
 import dama.model.board.BoardUtils;
 import dama.model.board.Tile;
 import dama.model.Alliance;
@@ -14,7 +15,6 @@ import java.util.*;
 public class Dama extends Piece {
 
 	private static final int[] CANDIDATE_MOVE_COORDINATES = {7, 9};
-	private static final int[] CANDIDATE_ADDITIONAL_ATTACK_MOVE_COORDINATES = {-9, -7, 7, 9};
 
 	public Dama(final int piecePosition,
 				final Alliance pieceAlliance) {
@@ -39,38 +39,51 @@ public class Dama extends Piece {
 				continue;
 			}
 
-			final int candidateDestinationCoordinate = this.piecePosition + (this.pieceAlliance.getDirections() * candidateCoordinateOffset);
+			final int candidateCoordinate = this.piecePosition + (this.pieceAlliance.getDirections() * candidateCoordinateOffset);
 
-			if(BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
-				final Tile candidateDestinationTile = board.getTile(candidateDestinationCoordinate);
+			if(BoardUtils.isValidTileCoordinate(candidateCoordinate)) {
+				final Tile candidateDestinationTile = board.getTile(candidateCoordinate);
 				if(!candidateDestinationTile.isTileOccupied()) {
-					legalMoves.add(new NormalMove(board, this, candidateDestinationCoordinate));
+					legalMoves.add(new NormalMove(board, this, candidateCoordinate));
 				} else {
-					final Piece pieceAtDestination = candidateDestinationTile.getPiece();
-					final Alliance pieceAlliance = pieceAtDestination.getPieceAlliance();
-					if(this.pieceAlliance != pieceAlliance) {
-						if(!BoardUtils.FIRST_COLUMN.get(pieceAtDestination.getPiecePosition()) &&
-						   !BoardUtils.LAST_COLUMN.get(pieceAtDestination.getPiecePosition())) {
-						   	final int attackCandidateDestinationCoordinate = candidateDestinationCoordinate + 
-																		 	 (this.pieceAlliance.getDirections() * candidateCoordinateOffset);
-							if(BoardUtils.isValidTileCoordinate(attackCandidateDestinationCoordinate)) {
-								final Tile candidateAttackDestinationTile = board.getTile(attackCandidateDestinationCoordinate);
+					final Piece candidateAttackPiece = candidateDestinationTile.getPiece();
+					final Alliance pieceAlliance = candidateAttackPiece.getPieceAlliance();
+					final int attackCandidateDestinationCoordinate = candidateCoordinate + 
+																	 	 (this.pieceAlliance.getDirections() * candidateCoordinateOffset);
+					final Tile candidateAttackDestinationTile = board.getTile(attackCandidateDestinationCoordinate);
 
-								if(!candidateAttackDestinationTile.isTileOccupied()) {
-									legalMoves.add(new AttackMove(board, this, attackCandidateDestinationCoordinate , pieceAtDestination));
-								}
-								//check for additional attack move candidate
-								for(final int candidateAdditionalAttackOffset : CANDIDATE_ADDITIONAL_ATTACK_MOVE_COORDINATES) {
-									//TODO decide to have a while loop in order to add the additional attack move
-								}
+					if(this.pieceAlliance != pieceAlliance && !BoardUtils.isTileOnTheEdge(candidateAttackPiece.getPiecePosition())) {
+						if(BoardUtils.isValidTileCoordinate(attackCandidateDestinationCoordinate) &&
+						   !candidateAttackDestinationTile.isTileOccupied()) {
+								legalMoves.add(new AttackMove(board, this, attackCandidateDestinationCoordinate, candidateAttackPiece));
+							//check for additional attack moves
+							List<Move> legalAttackMoves = new ArrayList<>();
+							boolean isFirstTransition = true;
+							do {
+								if(isFirstTransition) {
+									List<Piece> candidateAttackedPieces = new ArrayList<>();
+									candidateAttackedPieces.add(candidateAttackPiece);
+									Move move = new AdditionalAttackMove(board, this, attackCandidateDestinationCoordinate, candidateAttackedPieces);
+									Board transitionBoard = move.execute();
+									AttackDama attackDama = new AttackDama(attackCandidateDestinationCoordinate, this.pieceAlliance, candidateAttackedPieces);
 
-							}
+									final List<Move> legalAttackMoves.addAll(attackDama.calculateLegalMoves(transitionBoard));
+									for(final Move move : )
+									isFirstTransition = false;
+								} else {
+
+								}
+								
+
+								System.out.println(transitionBoard);
+							} while(!legalAttackMoves.isEmpty());
+							
 						}
+
 					}
+					
 				}
-
 			}
-
 		}
 
 		return ImmutableList.copyOf(legalMoves);

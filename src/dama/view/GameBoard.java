@@ -381,7 +381,7 @@ public class GameBoard {
 			@Override
 			public void paintComponent(Graphics g) {
 				super.paintComponent(g);
-				Color pieceColor = this.alliance.isBlack() ? Color.decode("#242424") : Color.decode("#FFF9F4");
+				Color pieceColor = this.alliance.isBlack() ? Color.decode("#470507") : Color.decode("#FFF9F4");
 				g.setColor(pieceColor);
 				g.fillOval(7, 7, this.getSize().width - 14, this.getSize().height - 14);
 			}
@@ -398,7 +398,7 @@ public class GameBoard {
 			@Override
 			public void paintComponent(Graphics g) {
 				Graphics2D g2 = (Graphics2D) g;
-				Color pieceColor = this.alliance.isBlack() ? Color.decode("#242424") : Color.decode("#FFF9F4");
+				Color pieceColor = this.alliance.isBlack() ? Color.decode("#470507") : Color.decode("#FFF9F4");
 				g2.setColor(pieceColor);
 				g2.setStroke(new BasicStroke(3));
 				g2.drawOval(7, 7, this.getSize().width - 14, this.getSize().height - 14);
@@ -414,7 +414,7 @@ public class GameBoard {
             } else if(BoardUtils.SECOND_ROW.get(this.tileId) ||
                       BoardUtils.FOURTH_ROW.get(this.tileId) ||
                       BoardUtils.SIXTH_ROW.get(this.tileId)  ||
-                      BoardUtils.EIGHTH_ROW.get(this.tileId)) {
+                      BoardUtils.LAST_ROW.get(this.tileId)) {
                 this.setBackground(this.tileId % 2 != 0 ? lightTileColor : darkTileColor);
             }
 		}

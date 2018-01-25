@@ -72,13 +72,7 @@ public abstract class Player {
 		}
 
 		final Board transitionBoard = move.execute();
-
-		// final Collection<Move> damaAttacks = Player.calculateOpponentMoves(transitionBoard.getCurrentPlayer().getOpponent().getLegalMoves());
-
-		// if(!damaAttacks.isEmpty()) {
-		// 	return new MoveTransition(this.board, move, MoveStatus.LEAVE_PLAYER_IN_CHECK);
-		// }
-
+		
 		return new MoveTransition(transitionBoard, move, MoveStatus.DONE);
 	}
 

@@ -32,6 +32,11 @@ public enum Alliance {
 		public String allianceToString() {
 			return "WHITE";
 		}
+
+		@Override
+		public Alliance opposite() {
+			return BLACK;
+		}
 	},
 
 	BLACK {
@@ -60,6 +65,11 @@ public enum Alliance {
 		public String allianceToString() {
 			return "BLACK";
 		}
+
+		@Override
+		public Alliance opposite() {
+			return WHITE;
+		}
 	};
 
 	public abstract int getDirections();
@@ -67,4 +77,5 @@ public enum Alliance {
     public abstract boolean isBlack();
     public abstract Player choosePlayer(WhitePlayer whitePlayer, BlackPlayer blackPlayer);
     public abstract String allianceToString();
+    public abstract Alliance opposite();
 }

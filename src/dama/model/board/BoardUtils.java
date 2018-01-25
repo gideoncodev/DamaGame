@@ -16,7 +16,7 @@ public class BoardUtils {
 	public static final List<Boolean> FIFTH_ROW = initRow(32);
 	public static final List<Boolean> SIXTH_ROW = initRow(40);
 	public static final List<Boolean> SEVENTH_ROW = initRow(48);
-	public static final List<Boolean> EIGHTH_ROW = initRow(56);
+	public static final List<Boolean> LAST_ROW = initRow(56);
 
 	public static final int NUM_TILES = 64;
 	public static final int NUM_TILES_PER_ROW = 8;
@@ -59,6 +59,11 @@ public class BoardUtils {
 
 	public static boolean isValidTileCoordinate(final int coordinate) {
 		return coordinate >= 0 && coordinate < NUM_TILES;
+	}
+
+	public static boolean isTileOnTheEdge(final int coordinate) {
+		return FIRST_COLUMN.get(coordinate) || LAST_COLUMN.get(coordinate) ||
+			   FIRST_ROW.get(coordinate) || LAST_ROW.get(coordinate);
 	}
 
 	public static int getCoordinateAtPosition(final int coordinate) {

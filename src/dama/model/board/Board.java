@@ -34,6 +34,16 @@ public final class Board {
 		this.blackPlayer = new BlackPlayer(this, whiteStandardLegalMove, blackStandardLegalMove);
 		this.currentPlayer = builder.nextMoveMaker.choosePlayer(this.whitePlayer, this.blackPlayer);
 	}
+
+	private Board(final Builder builder, final boolean falseBoard) {
+		this.gameBoard = createGameBoard(builder);
+		this.whitePieces = calculateActivePieces(this.gameBoard, Alliance.WHITE);
+		this.blackPieces = calculateActivePieces(this.gameBoard, Alliance.BLACK);
+
+		this.whitePlayer = null;
+		this.blackPlayer = null;
+		this.currentPlayer = null;
+	}
 	
 	public Tile getTile(final int tileCoordinate) {
 		return this.gameBoard.get(tileCoordinate);
@@ -65,7 +75,8 @@ public final class Board {
 	}
 
 	public Player getCurrentPlayer() {
-		return this.currentPlayer;
+		if(this.currentPlayer == null) System.out.println("Null Pointer");
+		return this.currentPlayer;		
 	}
 
 	public Player getPlayer(final Alliance alliance) {
@@ -156,11 +167,6 @@ public final class Board {
 			return this;
 		}
 
-		public Builder removePiece(final Piece piece) {
-			this.boardConfig.remove(piece.getPiecePosition());
-			return this;
-		}
-
 		public Builder setMoveMaker(final Alliance nextMoveMaker) {
 			this.nextMoveMaker = nextMoveMaker;
 			return this;
@@ -168,6 +174,10 @@ public final class Board {
 
 		public Board build() {
 			return new Board(this);
+		}
+
+		public Board build(final boolean falseBoard) {
+			return new Board(this, falseBoard);
 		}
 	}
 }

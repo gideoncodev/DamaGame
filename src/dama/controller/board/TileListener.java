@@ -54,6 +54,9 @@ public class TileListener extends MouseAdapter {
 					final Move move = Move.MoveFactory.createMove(tilePanel.getFrameDamaBoard(),
 																  tilePanel.getFrameSourceTile().getTileCoordinate(),
 																  tilePanel.getFrameDestinationTile().getTileCoordinate());
+					System.out.println("Created Move");
+					System.out.println(move.getCurrentCoordinate());
+					System.out.println(move.getDestinationCoordinate());
 					final MoveTransition transition = tilePanel.getFrameDamaBoard().getCurrentPlayer().makeMove(move);
 					if(transition.getMoveStatus().isDone()) {
 						tilePanel.setFrameDamaBoard(transition.getTransitionBoard());
