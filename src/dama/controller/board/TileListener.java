@@ -20,8 +20,6 @@ public class TileListener extends MouseAdapter {
 		if(SwingUtilities.isLeftMouseButton(e)) {
 			if(tilePanel.getFrameSourceTile() == null) {
 				tilePanel.setFrameSourceTile(tilePanel.getFrameDamaBoard().getTile(tilePanel.getTileId()));
-				System.out.println("First Piece Selected");
-				System.out.println(tilePanel.getFrameSourceTile().getPiece().getPiecePosition());
 				tilePanel.setFrameHumanMovedPiece(tilePanel.getFrameSourceTile().getPiece());
 				if(tilePanel.getFrameHumanMovedPiece() == null) {
 					tilePanel.setFrameSourceTile(null);
@@ -39,8 +37,6 @@ public class TileListener extends MouseAdapter {
 
 				if(secondTile.isTileOccupied()) {
 					tilePanel.setFrameSourceTile(tilePanel.getFrameDamaBoard().getTile(tilePanel.getTileId()));
-					System.out.println("Second Piece Selected occupied");
-					System.out.println(tilePanel.getFrameSourceTile().getPiece().getPiecePosition());
 					tilePanel.setFrameHumanMovedPiece(tilePanel.getFrameSourceTile().getPiece());
 					if(tilePanel.getFrameHumanMovedPiece() == null) {
 						tilePanel.setFrameSourceTile(null);
@@ -54,9 +50,6 @@ public class TileListener extends MouseAdapter {
 					final Move move = Move.MoveFactory.createMove(tilePanel.getFrameDamaBoard(),
 																  tilePanel.getFrameSourceTile().getTileCoordinate(),
 																  tilePanel.getFrameDestinationTile().getTileCoordinate());
-					System.out.println("Created Move");
-					System.out.println(move.getCurrentCoordinate());
-					System.out.println(move.getDestinationCoordinate());
 					final MoveTransition transition = tilePanel.getFrameDamaBoard().getCurrentPlayer().makeMove(move);
 					if(transition.getMoveStatus().isDone()) {
 						tilePanel.setFrameDamaBoard(transition.getTransitionBoard());
@@ -72,7 +65,7 @@ public class TileListener extends MouseAdapter {
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					tilePanel.getFrameTakenPiecesPanel().redo(tilePanel.getFrameMoveLog());
+					// tilePanel.getFrameTakenPiecesPanel().redo(tilePanel.getFrameMoveLog());
 					tilePanel.getBoardPanel().drawBoard(tilePanel.getFrameDamaBoard());
 				}
 			});
