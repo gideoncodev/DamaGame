@@ -30,23 +30,27 @@ public class AttackDama extends Piece {
 		final List<Move> legalMoves = new ArrayList<>();
 
 		for(final int candidateCoordinateOffset : CANDIDATE_MOVE_COORDINATES) {
-
-			if(isFirstColumnExclusion(this.piecePosition, candidateCoordinateOffset) ||
-				isLastColumnExclusion(this.piecePosition, candidateCoordinateOffset)) continue;
+			if(isFirstColumnExclusion(this.pieceAlliance, this.piecePosition, candidateCoordinateOffset) ||
+				isLastColumnExclusion(this.pieceAlliance, this.piecePosition, candidateCoordinateOffset)) continue;
 
 			final int candidateCoordinate = this.piecePosition + (this.pieceAlliance.getDirections() * candidateCoordinateOffset);
-			final Tile candidateDestinationTile = board.getTile(candidateCoordinate);
-			if(BoardUtils.isValidTileCoordinate(candidateCoordinate) && candidateDestinationTile.isTileOccupied()) {
-				final Piece candidateAttackPiece = candidateDestinationTile.getPiece();
-				final Alliance alliance = candidateAttackPiece.getPieceAlliance();
-				final int attackCandidateDestinationCoordinate = candidateCoordinate +
-																 (this.pieceAlliance.getDirections() * candidateCoordinateOffset);
-				final Tile candidateAttackDestinationTile = board.getTile(attackCandidateDestinationCoordinate);
-				if(this.pieceAlliance != alliance && !BoardUtils.isTileOnTheEdge(candidateAttackPiece.getPiecePosition())) {
-					if(BoardUtils.isValidTileCoordinate(attackCandidateDestinationCoordinate) &&
-					   !candidateAttackDestinationTile.isTileOccupied()) {
-					   	this.attackedPieces.add(candidateAttackPiece);
-						legalMoves.add(new AdditionalAttackMove(board, this, attackCandidateDestinationCoordinate, this.attackedPieces));
+			
+			
+			if(BoardUtils.isValidTileCoordinate(candidateCoordinate)) {
+				final Tile candidateDestinationTile = board.getTile(candidateCoordinate);
+				if(candidateDestinationTile.isTileOccupied()){
+					final Piece candidateAttackPiece = candidateDestinationTile.getPiece();
+					final Alliance alliance = candidateAttackPiece.getPieceAlliance();
+					final int attackCandidateDestinationCoordinate = candidateCoordinate +
+																	 (this.pieceAlliance.getDirections() * candidateCoordinateOffset);
+					
+					if(this.pieceAlliance != alliance && BoardUtils.isValidTileCoordinate(attackCandidateDestinationCoordinate)) {
+						final Tile candidateAttackDestinationTile = board.getTile(attackCandidateDestinationCoordinate);
+						if(!BoardUtils.isTileOnTheEdge(candidateAttackPiece.getPiecePosition()) &&
+						   !candidateAttackDestinationTile.isTileOccupied()) {
+						   	this.attackedPieces.add(candidateAttackPiece);
+							legalMoves.add(new AdditionalAttackMove(board, this, attackCandidateDestinationCoordinate, this.attackedPieces));
+						}
 					}
 				}
 			}
@@ -65,11 +69,13 @@ public class AttackDama extends Piece {
 		return Piece.PieceType.DAMA.toString();
 	}
 
-	private static boolean isFirstColumnExclusion(final int currentPosition, final int candidateOffset) {
-		return BoardUtils.FIRST_COLUMN.get(currentPosition) && (candidateOffset == -9 || candidateOffset == 7);
+	private static boolean isFirstColumnExclusion(final Alliance currentAlliance, final int currentPosition, final int candidateOffset) {
+		return (currentAlliance.isBlack()) ? BoardUtils.FIRST_COLUMN.get(currentPosition) && (candidateOffset == -9 || candidateOffset == 7) :
+												BoardUtils.FIRST_COLUMN.get(currentPosition) && (candidateOffset == -7 || candidateOffset == 9);
 	}
 
-	private static boolean isLastColumnExclusion(final int currentPosition, final int candidateOffset) {
-		return BoardUtils.LAST_COLUMN.get(currentPosition) && (candidateOffset == -7 || candidateOffset == 9);
+	private static boolean isLastColumnExclusion(final Alliance currentAlliance, final int currentPosition, final int candidateOffset) {
+		return (currentAlliance.isBlack()) ? BoardUtils.LAST_COLUMN.get(currentPosition) && (candidateOffset == -7 || candidateOffset == 9) :
+												BoardUtils.LAST_COLUMN.get(currentPosition) && (candidateOffset == -9 || candidateOffset == 7);
 	}
 }

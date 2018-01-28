@@ -14,7 +14,7 @@ import java.util.*;
 
 public class Dama extends Piece {
 
-	private static final int[] CANDIDATE_MOVE_COORDINATES = {7, 9};
+	private static final int[] CANDIDATE_MOVE_COORDINATES = {-9, -7, 7, 9};
 
 	public Dama(final int piecePosition,
 				final Alliance pieceAlliance) {
@@ -27,33 +27,25 @@ public class Dama extends Piece {
 
 		for(final int candidateCoordinateOffset : CANDIDATE_MOVE_COORDINATES) {
 
-			if(this.pieceAlliance.isWhite() &&
-			   ((BoardUtils.FIRST_COLUMN.get(this.piecePosition) && candidateCoordinateOffset == 9) ||
-			   	(BoardUtils.LAST_COLUMN.get(this.piecePosition) && candidateCoordinateOffset == 7))) {
-				continue;
-			}
-
-			if(this.pieceAlliance.isBlack() &&
-			   ((BoardUtils.FIRST_COLUMN.get(this.piecePosition) && candidateCoordinateOffset == 7) ||
-			   	(BoardUtils.LAST_COLUMN.get(this.piecePosition) && candidateCoordinateOffset == 9))) {
-				continue;
-			}
+			if(isFirstColumnExclusion(this.pieceAlliance, this.piecePosition, candidateCoordinateOffset) ||
+				isLastColumnExclusion(this.pieceAlliance, this.piecePosition, candidateCoordinateOffset)) continue;
 
 			final int candidateCoordinate = this.piecePosition + (this.pieceAlliance.getDirections() * candidateCoordinateOffset);
-
 			if(BoardUtils.isValidTileCoordinate(candidateCoordinate)) {
 				final Tile candidateDestinationTile = board.getTile(candidateCoordinate);
 				if(!candidateDestinationTile.isTileOccupied()) {
-					legalMoves.add(new NormalMove(board, this, candidateCoordinate));
+					if(candidateCoordinateOffset == 7 || candidateCoordinateOffset == 9) {
+						legalMoves.add(new NormalMove(board, this, candidateCoordinate));
+					}
 				} else {
 					final Piece candidateAttackPiece = candidateDestinationTile.getPiece();
 					final Alliance pieceAlliance = candidateAttackPiece.getPieceAlliance();
 					final int attackCandidateDestinationCoordinate = candidateCoordinate + 
 																	 	 (this.pieceAlliance.getDirections() * candidateCoordinateOffset);
-					final Tile candidateAttackDestinationTile = board.getTile(attackCandidateDestinationCoordinate);
 
-					if(this.pieceAlliance != pieceAlliance && !BoardUtils.isTileOnTheEdge(candidateAttackPiece.getPiecePosition())) {
-						if(BoardUtils.isValidTileCoordinate(attackCandidateDestinationCoordinate) &&
+					if(this.pieceAlliance != pieceAlliance && BoardUtils.isValidTileCoordinate(attackCandidateDestinationCoordinate)) {
+						final Tile candidateAttackDestinationTile = board.getTile(attackCandidateDestinationCoordinate);
+						if(!BoardUtils.isTileOnTheEdge(candidateAttackPiece.getPiecePosition()) &&
 						   !candidateAttackDestinationTile.isTileOccupied()) {
 
 						   	List<Piece> candidateAttackedPieces = new ArrayList<>();
@@ -97,6 +89,16 @@ public class Dama extends Piece {
 	@Override
 	public String toString() {
 		return Piece.PieceType.DAMA.toString();
+	}
+
+	private static boolean isFirstColumnExclusion(final Alliance currentAlliance, final int currentPosition, final int candidateOffset) {
+		return (currentAlliance.isBlack()) ? BoardUtils.FIRST_COLUMN.get(currentPosition) && (candidateOffset == -9 || candidateOffset == 7) :
+												BoardUtils.FIRST_COLUMN.get(currentPosition) && (candidateOffset == -7 || candidateOffset == 9);
+	}
+
+	private static boolean isLastColumnExclusion(final Alliance currentAlliance, final int currentPosition, final int candidateOffset) {
+		return (currentAlliance.isBlack()) ? BoardUtils.LAST_COLUMN.get(currentPosition) && (candidateOffset == -7 || candidateOffset == 9) :
+												BoardUtils.LAST_COLUMN.get(currentPosition) && (candidateOffset == -9 || candidateOffset == 7);
 	}
 
 }
