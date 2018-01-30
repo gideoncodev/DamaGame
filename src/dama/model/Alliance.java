@@ -3,6 +3,7 @@ package dama.model;
 import dama.model.player.Player;
 import dama.model.player.WhitePlayer;
 import dama.model.player.BlackPlayer;
+import dama.model.board.BoardUtils;
 
 public enum Alliance {
 
@@ -29,13 +30,18 @@ public enum Alliance {
 		}
 
 		@Override
-		public String allianceToString() {
+		public String toString() {
 			return "WHITE";
 		}
 
 		@Override
 		public Alliance opposite() {
 			return BLACK;
+		}
+
+		@Override
+		public boolean isDamaPromotionTile(int position) {
+			return BoardUtils.FIRST_ROW.get(position);
 		}
 	},
 
@@ -62,13 +68,18 @@ public enum Alliance {
 		}
 
 		@Override
-		public String allianceToString() {
+		public String toString() {
 			return "BLACK";
 		}
 
 		@Override
 		public Alliance opposite() {
 			return WHITE;
+		}
+
+		@Override
+		public boolean isDamaPromotionTile(int position) {
+			return BoardUtils.LAST_ROW.get(position);
 		}
 	};
 
@@ -78,4 +89,5 @@ public enum Alliance {
     public abstract Player choosePlayer(WhitePlayer whitePlayer, BlackPlayer blackPlayer);
     public abstract String allianceToString();
     public abstract Alliance opposite();
+    public abstract boolean isDamaPromotionTile(int position);
 }

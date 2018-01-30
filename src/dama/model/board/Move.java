@@ -3,6 +3,8 @@ package dama.model.board;
 import dama.model.pieces.Piece;
 import dama.model.board.Board.Builder;
 import dama.model.board.BoardUtils;
+import dama.model.pieces.Dama;
+import dama.model.pieces.KingDama;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -58,6 +60,10 @@ public abstract class Move {
 			   this.getMovedPiece().equals(otherMove.getMovedPiece());
 	}
 
+	public Board getBoard() {
+		return this.board;
+	}
+
 	public int getCurrentCoordinate(){
 		return this.movedPiece.getPiecePosition();
 	}
@@ -72,10 +78,6 @@ public abstract class Move {
 
 	public boolean isAttack() {
 		return false;
-	}
-
-	public Piece getAttackedPiece() {
-		return null;
 	}
 
 	public List<Piece> getAttackedPieces() {
@@ -258,15 +260,99 @@ public abstract class Move {
 
 	}
 
+	public static final class DamaPromotion extends NormalMove {
+
+		final Move decoratedMove;
+		final Dama promotedDama;
+
+		private DamaPromotion(final Move decoratedMove) {
+			super(decoratedMove.getBoard(), decoratedMove.getMovedPiece(), decoratedMove.getDestinationCoordinate());
+			this.decoratedMove = decoratedMove;
+			this.promotedDama = (Dama) decoratedMove.getMovedPiece();
+		}
+
+		@Override
+		public int hashCode() {
+			return this.decoratedMove.hashCode() + (31 * promotedDama.hashCode());
+		}
+
+		@Override
+		public boolean equals(final Object other) {
+			return this == other || other instanceof DamaPromotion && super.equals(other);
+		}
+
+		@Override
+		public boolean isAttack() {
+			return this.decoratedMove.isAttack();
+		}
+
+		@Override
+		public List<Piece> getAttackedPieces() {
+			return this.decoratedMove.getAttackedPieces();
+		}
+
+		@Override
+		public Board execute() {
+
+			final Board damaMovedBoard = this.decoratedMove.execute();
+			final Builder builer = new Builder();
+
+			for(final Piece piece : damaMovedBoard.getCurrentPlayer().getActivePieces()) {
+				if(!this.promotedDama.equals(piece)) {
+					builder.setPiece(piece);
+				}
+			}
+
+			for(final Piece piece : damaMovedBoard.getCurrentPlayer().getOpponent().getActivePieces()) {
+				if(!this.decoratedMove.getActivePieces().contains(piece)) {
+					builder.setPiece(piece);
+				}
+			}
+
+			//TODO update for the dama promotion
+
+			builder.setPiece();
+			builder.setMoveMaker();
+
+
+			// 	for(final Piece piece : this.board.getCurrentPlayer().getActivePieces()) {
+			// 	if(!this.movedPiece.equals(piece)){
+			// 		builder.setPiece(piece);
+			// 	}
+			// }
+
+			// for(final Piece piece : this.board.getCurrentPlayer().getOpponent().getActivePieces()) {
+			// 	if(!this.attackedPieces.contains(piece)){
+			// 		builder.setPiece(piece);
+			// 	}
+			// }
+
+			// builder.setPiece(this.movedPiece.movePiece(this));
+			// builder.setMoveMaker(this.board.getCurrentPlayer().getOpponent().getAlliance());
+
+			return builder.build();
+		}
+
+		@Override
+		public String toString() {
+			return "";
+		}
+	}
+
 	public static final class NullMove extends Move {
 
 		public NullMove() {
-			super(null, null, -1);
+			super(null, 65);
 		}
 
 		@Override
 		public Board execute(){
 			throw new RuntimeException("Cannot execute NULL MOVE!");
+		}
+
+		@Override
+		public int getCurrentCoordinate() {
+			return -1;
 		}
 
 	}

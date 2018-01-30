@@ -35,7 +35,11 @@ public class Dama extends Piece {
 				final Tile candidateDestinationTile = board.getTile(candidateCoordinate);
 				if(!candidateDestinationTile.isTileOccupied()) {
 					if(candidateCoordinateOffset == 7 || candidateCoordinateOffset == 9) {
-						legalMoves.add(new NormalMove(board, this, candidateCoordinate));
+						if(this.pieceAlliance.isDamaPromotionTile(candidateCoordinate)) {
+							legalMoves.add(new DamaPromotion(new NormalMove(board, this, candidateCoordinate)));
+						} else {
+							legalMoves.add(new NormalMove(board, this, candidateCoordinate));
+						}
 					}
 				} else {
 					final Piece candidateAttackPiece = candidateDestinationTile.getPiece();
@@ -48,36 +52,37 @@ public class Dama extends Piece {
 						if(!BoardUtils.isTileOnTheEdge(candidateAttackPiece.getPiecePosition()) &&
 						   !candidateAttackDestinationTile.isTileOccupied()) {
 
-						   	List<Piece> candidateAttackedPieces = new ArrayList<>();
+						   	final List<Piece> candidateAttackedPieces = new ArrayList<>();
 							candidateAttackedPieces.add(candidateAttackPiece);
 
-							legalMoves.add(new AttackMove(board, this, attackCandidateDestinationCoordinate, candidateAttackedPieces));
+							if(this.pieceAlliance.isDamaPromotionTile(candidateCoordinate)) {
+								legalMoves.add(new DamaPromotion(new AttackMove(board, this, attackCandidateDestinationCoordinate, candidateAttackedPieces)));
+							} else {
+								legalMoves.add(new AttackMove(board, this, attackCandidateDestinationCoordinate, candidateAttackedPieces));
+							}
 							//check for additional attack moves
 							List<Move> legalAttackMoves = new ArrayList<>();
 							Move checkMove = new AdditionalAttackMove(board, this, attackCandidateDestinationCoordinate, candidateAttackedPieces);
 							AttackDama checkAttackDama = new AttackDama(attackCandidateDestinationCoordinate, this.pieceAlliance, candidateAttackedPieces);
 							legalAttackMoves.addAll(checkAttackDama.calculateLegalMoves(checkMove.execute()));
 
+
+
 							while(!legalAttackMoves.isEmpty()) {
 								final List<Move> addLegalAttackMoves = new ArrayList<>();
 								addLegalAttackMoves.addAll(legalAttackMoves);
 								legalAttackMoves.clear();
-
 								for(final Move move : addLegalAttackMoves) {
 									legalMoves.add(new AttackMove(board, this, move.getDestinationCoordinate(), move.getAttackedPieces()));
 									AttackDama attackDama = new AttackDama(move.getDestinationCoordinate(), this.pieceAlliance, move.getAttackedPieces());
 									legalAttackMoves.addAll(attackDama.calculateLegalMoves(move.execute()));
 								}
 							}
-							
 						}
-
 					}
-					
 				}
 			}
 		}
-
 		return ImmutableList.copyOf(legalMoves);
 	}
 
