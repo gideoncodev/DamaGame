@@ -51,14 +51,14 @@ public class TakenPiecesPanel extends JPanel {
 
 		for(final Move move : moveLog.getMoves()) {
 			if(move.isAttack()) {
-				final Piece takenPiece = move.getAttackedPiece();
-				if(takenPiece.getPieceAlliance().isWhite()) {
-					whiteTakenPieces.add(takenPiece);
-				} else if(takenPiece.getPieceAlliance().isBlack()) {
-					blackTakenPieces.add(takenPiece);
-				} else {
-					throw new RuntimeException("Should not reach here!!");
-				}
+				// final Piece takenPiece = move.getAttackedPiece();
+				// if(takenPiece.getPieceAlliance().isWhite()) {
+				// 	whiteTakenPieces.add(takenPiece);
+				// } else if(takenPiece.getPieceAlliance().isBlack()) {
+				// 	blackTakenPieces.add(takenPiece);
+				// } else {
+				// 	throw new RuntimeException("Should not reach here!!");
+				// }
 			}
 		}
 

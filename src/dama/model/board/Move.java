@@ -104,7 +104,7 @@ public abstract class Move {
 		return builder.build();
 	}
 
-	public static final class NormalMove extends Move {
+	public static class NormalMove extends Move {
 
 		public NormalMove(final Board board,
 						  final Piece movedPiece,
@@ -263,12 +263,14 @@ public abstract class Move {
 	public static final class DamaPromotion extends NormalMove {
 
 		final Move decoratedMove;
-		final Dama promotedDama;
+		final Piece promotedDama;
+		final Piece promotionPiece;
 
-		private DamaPromotion(final Move decoratedMove) {
+		public DamaPromotion(final Move decoratedMove) {
 			super(decoratedMove.getBoard(), decoratedMove.getMovedPiece(), decoratedMove.getDestinationCoordinate());
 			this.decoratedMove = decoratedMove;
 			this.promotedDama = (Dama) decoratedMove.getMovedPiece();
+			this.promotionPiece = new KingDama(decoratedMove.getDestinationCoordinate(), this.promotedDama.getPieceAlliance());
 		}
 
 		@Override
@@ -295,7 +297,7 @@ public abstract class Move {
 		public Board execute() {
 
 			final Board damaMovedBoard = this.decoratedMove.execute();
-			final Builder builer = new Builder();
+			final Builder builder = new Builder();
 
 			for(final Piece piece : damaMovedBoard.getCurrentPlayer().getActivePieces()) {
 				if(!this.promotedDama.equals(piece)) {
@@ -304,31 +306,13 @@ public abstract class Move {
 			}
 
 			for(final Piece piece : damaMovedBoard.getCurrentPlayer().getOpponent().getActivePieces()) {
-				if(!this.decoratedMove.getActivePieces().contains(piece)) {
+				if(!this.decoratedMove.getAttackedPieces().contains(piece)) {
 					builder.setPiece(piece);
 				}
 			}
 
-			//TODO update for the dama promotion
-
-			builder.setPiece();
-			builder.setMoveMaker();
-
-
-			// 	for(final Piece piece : this.board.getCurrentPlayer().getActivePieces()) {
-			// 	if(!this.movedPiece.equals(piece)){
-			// 		builder.setPiece(piece);
-			// 	}
-			// }
-
-			// for(final Piece piece : this.board.getCurrentPlayer().getOpponent().getActivePieces()) {
-			// 	if(!this.attackedPieces.contains(piece)){
-			// 		builder.setPiece(piece);
-			// 	}
-			// }
-
-			// builder.setPiece(this.movedPiece.movePiece(this));
-			// builder.setMoveMaker(this.board.getCurrentPlayer().getOpponent().getAlliance());
+			builder.setPiece(this.promotionPiece.movePiece(this));
+			builder.setMoveMaker(damaMovedBoard.getCurrentPlayer().getAlliance());
 
 			return builder.build();
 		}

@@ -87,7 +87,6 @@ public enum Alliance {
 	public abstract boolean isWhite();
     public abstract boolean isBlack();
     public abstract Player choosePlayer(WhitePlayer whitePlayer, BlackPlayer blackPlayer);
-    public abstract String allianceToString();
     public abstract Alliance opposite();
     public abstract boolean isDamaPromotionTile(int position);
 }
