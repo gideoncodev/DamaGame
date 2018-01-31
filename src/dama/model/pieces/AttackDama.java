@@ -14,8 +14,9 @@ import java.util.*;
 
 public class AttackDama extends Piece {
 
-	private static final int[] CANDIDATE_MOVE_COORDINATES = {-9, -7, 7, 9};
 	private List<Piece> attackedPieces;
+
+	private static final int[] CANDIDATE_MOVE_COORDINATES = {-9, -7, 7, 9};
 
 	public AttackDama(final int piecePosition,
 				final Alliance pieceAlliance,
@@ -42,11 +43,11 @@ public class AttackDama extends Piece {
 				final Tile candidateDestinationTile = board.getTile(candidateCoordinate);
 				if(candidateDestinationTile.isTileOccupied()){
 					final Piece candidateAttackPiece = candidateDestinationTile.getPiece();
-					final Alliance alliance = candidateAttackPiece.getPieceAlliance();
+					final Alliance pieceAlliance = candidateAttackPiece.getPieceAlliance();
 					final int attackCandidateDestinationCoordinate = candidateCoordinate +
 																	 (this.pieceAlliance.getDirections() * candidateCoordinateOffset);
 					
-					if(this.pieceAlliance != alliance && BoardUtils.isValidTileCoordinate(attackCandidateDestinationCoordinate)) {
+					if(this.pieceAlliance != pieceAlliance && BoardUtils.isValidTileCoordinate(attackCandidateDestinationCoordinate)) {
 						final Tile candidateAttackDestinationTile = board.getTile(attackCandidateDestinationCoordinate);
 						if(!BoardUtils.isTileOnTheEdge(candidateAttackPiece.getPiecePosition()) &&
 						   !candidateAttackDestinationTile.isTileOccupied()) {

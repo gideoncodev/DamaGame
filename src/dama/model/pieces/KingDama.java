@@ -13,11 +13,14 @@ import java.util.*;
 
 public class KingDama extends Piece {
 
+	private List<Piece> attackedPieces;
+
 	private static final int[] CANDIDATE_MOVE_COORDINATES = { -9, -7, 7, 9 };
 
 	public KingDama(final int piecePosition,
 					final Alliance pieceAlliance) {
 		super(PieceType.KINGDAMA, piecePosition, pieceAlliance);
+		this.attackedPieces = new ArrayList<>();
 	}
 
 	@Override
@@ -26,27 +29,40 @@ public class KingDama extends Piece {
 		final List<Move> legalMoves = new ArrayList<>();
 
 		for(final int candidateCoordinateOffset : CANDIDATE_MOVE_COORDINATES) {
-
-			if(!(isFirstColumnExclusion(this.piecePosition, candidateCoordinateOffset) &&
-				isLastColumnExclusion(this.piecePosition, candidateCoordinateOffset))) continue;
 			
 			int candidateDestinationCoordinate = this.piecePosition;
 
 			while(BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
+				if(isFirstColumnExclusion(candidateDestinationCoordinate, candidateCoordinateOffset) ||
+				   isLastColumnExclusion(candidateDestinationCoordinate, candidateCoordinateOffset)) break;
+
 				candidateDestinationCoordinate += candidateCoordinateOffset;
+				//TODO: refactor for all valid moves 
 				if(BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
 					final Tile candidateDestinationTile = board.getTile(candidateDestinationCoordinate);
 
 					if(!candidateDestinationTile.isTileOccupied()) {
-						legalMoves.add(new NormalMove(board, this, candidateDestinationCoordinate));
+						if(!hasPreviousAttackMove(legalMoves, (candidateDestinationCoordinate - candidateCoordinateOffset))) {
+							legalMoves.add(new NormalMove(board, this, candidateDestinationCoordinate));
+						} else {
+							legalMoves.add(new AttackMove(board, this, candidateDestinationCoordinate, this.attackedPieces));
+						}
 					} else {
-						final Piece pieceAtDestination = candidateDestinationTile.getPiece();
-						final Alliance pieceAlliance = pieceAtDestination.getPieceAlliance();
+						// if(!BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) break;
+						if(isFirstColumnExclusion(candidateDestinationCoordinate, candidateCoordinateOffset) ||
+				   		   isLastColumnExclusion(candidateDestinationCoordinate, candidateCoordinateOffset)) break;
+						final Piece candidateAttackPiece = candidateDestinationTile.getPiece();
+						final Alliance pieceAlliance = candidateAttackPiece.getPieceAlliance();
+						candidateDestinationCoordinate += candidateCoordinateOffset;
 
-						if(this.pieceAlliance != pieceAlliance) {
-							List<Piece> candidateAttackedPieces = new ArrayList<>();
-							candidateAttackedPieces.add(pieceAtDestination);
-							legalMoves.add(new AttackMove(board, this, candidateDestinationCoordinate, candidateAttackedPieces));
+						if(this.pieceAlliance != pieceAlliance &&
+						   BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
+							final Tile candidateAttackDestinationTile = board.getTile(candidateDestinationCoordinate);
+							if(!BoardUtils.isTileOnTheEdge(candidateAttackPiece.getPiecePosition()) &&
+						   	   !candidateAttackDestinationTile.isTileOccupied()) {
+								this.attackedPieces.add(candidateAttackPiece);
+								legalMoves.add(new AttackMove(board, this, candidateDestinationCoordinate, this.attackedPieces));
+							}
 						}
 					}
 				}
@@ -73,5 +89,12 @@ public class KingDama extends Piece {
 
 	private static boolean isLastColumnExclusion(final int currentPosition, final int candidateOffset) {
 		return BoardUtils.LAST_COLUMN.get(currentPosition) && (candidateOffset == -7 || candidateOffset == 9);
+	}
+
+	private boolean hasPreviousAttackMove(final List<Move> legalMoves, final int destinationCoordinate) {
+		for(final Move move : legalMoves) {
+			if(move.getDestinationCoordinate() == destinationCoordinate && move instanceof AttackMove) return true;
+		}
+		return false;
 	}
 }

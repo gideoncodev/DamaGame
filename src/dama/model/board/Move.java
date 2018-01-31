@@ -264,13 +264,11 @@ public abstract class Move {
 
 		final Move decoratedMove;
 		final Piece promotedDama;
-		final Piece promotionPiece;
 
 		public DamaPromotion(final Move decoratedMove) {
 			super(decoratedMove.getBoard(), decoratedMove.getMovedPiece(), decoratedMove.getDestinationCoordinate());
 			this.decoratedMove = decoratedMove;
 			this.promotedDama = (Dama) decoratedMove.getMovedPiece();
-			this.promotionPiece = new KingDama(decoratedMove.getDestinationCoordinate(), this.promotedDama.getPieceAlliance());
 		}
 
 		@Override
@@ -295,31 +293,23 @@ public abstract class Move {
 
 		@Override
 		public Board execute() {
-
 			final Board damaMovedBoard = this.decoratedMove.execute();
 			final Builder builder = new Builder();
 
 			for(final Piece piece : damaMovedBoard.getCurrentPlayer().getActivePieces()) {
+				builder.setPiece(piece);
+			}
+
+			for(final Piece piece : damaMovedBoard.getCurrentPlayer().getOpponent().getActivePieces()) {
 				if(!this.promotedDama.equals(piece)) {
 					builder.setPiece(piece);
 				}
 			}
 
-			for(final Piece piece : damaMovedBoard.getCurrentPlayer().getOpponent().getActivePieces()) {
-				if(!this.decoratedMove.getAttackedPieces().contains(piece)) {
-					builder.setPiece(piece);
-				}
-			}
-
-			builder.setPiece(this.promotionPiece.movePiece(this));
+			builder.setPiece(new KingDama(this.destinationCoordinate, this.promotedDama.getPieceAlliance()));
 			builder.setMoveMaker(damaMovedBoard.getCurrentPlayer().getAlliance());
 
 			return builder.build();
-		}
-
-		@Override
-		public String toString() {
-			return "";
 		}
 	}
 

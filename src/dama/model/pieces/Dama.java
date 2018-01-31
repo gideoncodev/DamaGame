@@ -55,7 +55,7 @@ public class Dama extends Piece {
 						   	final List<Piece> candidateAttackedPieces = new ArrayList<>();
 							candidateAttackedPieces.add(candidateAttackPiece);
 
-							if(this.pieceAlliance.isDamaPromotionTile(candidateCoordinate)) {
+							if(this.pieceAlliance.isDamaPromotionTile(attackCandidateDestinationCoordinate)) {
 								legalMoves.add(new DamaPromotion(new AttackMove(board, this, attackCandidateDestinationCoordinate, candidateAttackedPieces)));
 							} else {
 								legalMoves.add(new AttackMove(board, this, attackCandidateDestinationCoordinate, candidateAttackedPieces));
@@ -71,7 +71,11 @@ public class Dama extends Piece {
 								addLegalAttackMoves.addAll(legalAttackMoves);
 								legalAttackMoves.clear();
 								for(final Move move : addLegalAttackMoves) {
-									legalMoves.add(new AttackMove(board, this, move.getDestinationCoordinate(), move.getAttackedPieces()));
+									if(this.pieceAlliance.isDamaPromotionTile(move.getDestinationCoordinate())) {
+										legalMoves.add(new DamaPromotion(new AttackMove(board, this, move.getDestinationCoordinate(), move.getAttackedPieces())));
+									} else {
+										legalMoves.add(new AttackMove(board, this, move.getDestinationCoordinate(), move.getAttackedPieces()));
+									}
 									AttackDama attackDama = new AttackDama(move.getDestinationCoordinate(), this.pieceAlliance, move.getAttackedPieces());
 									legalAttackMoves.addAll(attackDama.calculateLegalMoves(move.execute()));
 								}
