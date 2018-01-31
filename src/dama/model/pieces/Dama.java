@@ -61,9 +61,9 @@ public class Dama extends Piece {
 								legalMoves.add(new AttackMove(board, this, attackCandidateDestinationCoordinate, candidateAttackedPieces));
 							}
 							//check for additional attack moves
-							List<Move> legalAttackMoves = new ArrayList<>();
-							Move checkMove = new AdditionalAttackMove(board, this, attackCandidateDestinationCoordinate, candidateAttackedPieces);
-							AttackDama checkAttackDama = new AttackDama(attackCandidateDestinationCoordinate, this.pieceAlliance, candidateAttackedPieces);
+							final List<Move> legalAttackMoves = new ArrayList<>();
+							final Move checkMove = new AdditionalAttackMove(board, this, attackCandidateDestinationCoordinate, candidateAttackedPieces);
+							final AttackDama checkAttackDama = new AttackDama(attackCandidateDestinationCoordinate, this.pieceAlliance, candidateAttackedPieces);
 							legalAttackMoves.addAll(checkAttackDama.calculateLegalMoves(checkMove.execute()));
 
 							while(!legalAttackMoves.isEmpty()) {

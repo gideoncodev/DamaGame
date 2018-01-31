@@ -19,8 +19,8 @@ public class AttackDama extends Piece {
 	private static final int[] CANDIDATE_MOVE_COORDINATES = {-9, -7, 7, 9};
 
 	public AttackDama(final int piecePosition,
-				final Alliance pieceAlliance,
-				final List<Piece> attackedPieces) {
+					  final Alliance pieceAlliance,
+					  final List<Piece> attackedPieces) {
 		super(PieceType.DAMA, piecePosition, pieceAlliance);
 		this.attackedPieces = new ArrayList<>();
 		this.attackedPieces.addAll(attackedPieces);
