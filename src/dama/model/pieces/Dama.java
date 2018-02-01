@@ -30,40 +30,41 @@ public class Dama extends Piece {
 			if(isFirstColumnExclusion(this.pieceAlliance, this.piecePosition, candidateCoordinateOffset) ||
 				isLastColumnExclusion(this.pieceAlliance, this.piecePosition, candidateCoordinateOffset)) continue;
 
-			final int candidateCoordinate = this.piecePosition + (this.pieceAlliance.getDirections() * candidateCoordinateOffset);
-			if(BoardUtils.isValidTileCoordinate(candidateCoordinate)) {
-				final Tile candidateDestinationTile = board.getTile(candidateCoordinate);
+			int candidateDestinationCoordinate = this.piecePosition + (this.pieceAlliance.getDirections() * candidateCoordinateOffset);
+			if(BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
+				final Tile candidateDestinationTile = board.getTile(candidateDestinationCoordinate);
 				if(!candidateDestinationTile.isTileOccupied()) {
 					if(candidateCoordinateOffset == 7 || candidateCoordinateOffset == 9) {
-						if(this.pieceAlliance.isDamaPromotionTile(candidateCoordinate)) {
-							legalMoves.add(new DamaPromotion(new NormalMove(board, this, candidateCoordinate)));
+						if(this.pieceAlliance.isDamaPromotionTile(candidateDestinationCoordinate)) {
+							legalMoves.add(new DamaPromotion(new NormalMove(board, this, candidateDestinationCoordinate)));
 						} else {
-							legalMoves.add(new NormalMove(board, this, candidateCoordinate));
+							legalMoves.add(new NormalMove(board, this, candidateDestinationCoordinate));
 						}
 					}
 				} else {
 					final Piece candidateAttackPiece = candidateDestinationTile.getPiece();
 					final Alliance pieceAlliance = candidateAttackPiece.getPieceAlliance();
-					final int attackCandidateDestinationCoordinate = candidateCoordinate + 
-																	 	 (this.pieceAlliance.getDirections() * candidateCoordinateOffset);
+					candidateDestinationCoordinate += (this.pieceAlliance.getDirections() * candidateCoordinateOffset);
 
-					if(this.pieceAlliance != pieceAlliance && BoardUtils.isValidTileCoordinate(attackCandidateDestinationCoordinate)) {
-						final Tile candidateAttackDestinationTile = board.getTile(attackCandidateDestinationCoordinate);
-						if(!BoardUtils.isTileOnTheEdge(candidateAttackPiece.getPiecePosition()) &&
+					if(BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
+						final Tile candidateAttackDestinationTile = board.getTile(candidateDestinationCoordinate);
+						if(candidateAttackDestinationTile.isTileOccupied()) continue;
+						if(this.pieceAlliance != pieceAlliance && 
+						   !BoardUtils.isTileOnTheEdge(candidateAttackPiece.getPiecePosition()) &&
 						   !candidateAttackDestinationTile.isTileOccupied()) {
 
 						   	final List<Piece> candidateAttackedPieces = new ArrayList<>();
 							candidateAttackedPieces.add(candidateAttackPiece);
 
-							if(this.pieceAlliance.isDamaPromotionTile(attackCandidateDestinationCoordinate)) {
-								legalMoves.add(new DamaPromotion(new AttackMove(board, this, attackCandidateDestinationCoordinate, candidateAttackedPieces)));
+							if(this.pieceAlliance.isDamaPromotionTile(candidateDestinationCoordinate)) {
+								legalMoves.add(new DamaPromotion(new AttackMove(board, this, candidateDestinationCoordinate, candidateAttackedPieces)));
 							} else {
-								legalMoves.add(new AttackMove(board, this, attackCandidateDestinationCoordinate, candidateAttackedPieces));
+								legalMoves.add(new AttackMove(board, this, candidateDestinationCoordinate, candidateAttackedPieces));
 							}
 							//check for additional attack moves
 							final List<Move> legalAttackMoves = new ArrayList<>();
-							final Move checkMove = new AdditionalAttackMove(board, this, attackCandidateDestinationCoordinate, candidateAttackedPieces);
-							final AttackDama checkAttackDama = new AttackDama(attackCandidateDestinationCoordinate, this.pieceAlliance, candidateAttackedPieces);
+							final Move checkMove = new AdditionalAttackMove(board, this, candidateDestinationCoordinate, candidateAttackedPieces);
+							final AttackDama checkAttackDama = new AttackDama(candidateDestinationCoordinate, this.pieceAlliance, candidateAttackedPieces);
 							legalAttackMoves.addAll(checkAttackDama.calculateLegalMoves(checkMove.execute()));
 
 							while(!legalAttackMoves.isEmpty()) {

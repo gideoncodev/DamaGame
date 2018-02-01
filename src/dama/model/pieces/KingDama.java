@@ -38,6 +38,8 @@ public class KingDama extends Piece {
 
 				candidateDestinationCoordinate += candidateCoordinateOffset;
 
+				final List<Move> legalAttackMoves = new ArrayList<>();
+
 				if(BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
 					final Tile candidateDestinationTile = board.getTile(candidateDestinationCoordinate);
 
@@ -45,9 +47,19 @@ public class KingDama extends Piece {
 						if(!hasPreviousAttackMove(legalMoves, (candidateDestinationCoordinate - candidateCoordinateOffset))) {
 							legalMoves.add(new NormalMove(board, this, candidateDestinationCoordinate));
 						} else {
-							legalMoves.add(new AttackMove(board, this, candidateDestinationCoordinate, this.attackedPieces))
+							legalMoves.add(new AttackMove(board, this, candidateDestinationCoordinate, this.attackedPieces));
+							System.out.println("AttackMove for empty tile");
 
-							//TODO, loop additional attack moves for KingDama 
+							final Move checkMove = new AdditionalAttackMove(board, this, candidateDestinationCoordinate, this.attackedPieces);
+							final AttackKingDama checkAttackKingDama = new AttackKingDama(candidateDestinationCoordinate,
+																						  this.pieceAlliance, this.attackedPieces,
+																						  this.getMoveCoordinates(candidateCoordinateOffset));
+							for(final int coordinate : this.getMoveCoordinates(candidateCoordinateOffset)) {
+								System.out.println(coordinate);
+							}
+							System.out.println(checkMove.execute());
+							legalAttackMoves.addAll(checkAttackKingDama.calculateLegalMoves(checkMove.execute()));
+
 						}
 					} else {
 						if(isFirstColumnExclusion(candidateDestinationCoordinate, candidateCoordinateOffset) ||
@@ -57,17 +69,39 @@ public class KingDama extends Piece {
 						final Alliance pieceAlliance = candidateAttackPiece.getPieceAlliance();
 						candidateDestinationCoordinate += candidateCoordinateOffset;
 
-						if(this.pieceAlliance != pieceAlliance &&
-						   BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
+						if(BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
 							final Tile candidateAttackDestinationTile = board.getTile(candidateDestinationCoordinate);
-							if(!BoardUtils.isTileOnTheEdge(candidateAttackPiece.getPiecePosition()) &&
+							if(candidateAttackDestinationTile.isTileOccupied()) break;
+							if(this.pieceAlliance != pieceAlliance &&
+							   !BoardUtils.isTileOnTheEdge(candidateAttackPiece.getPiecePosition()) &&
 						   	   !candidateAttackDestinationTile.isTileOccupied()) {
 								this.attackedPieces.add(candidateAttackPiece);
 								legalMoves.add(new AttackMove(board, this, candidateDestinationCoordinate, this.attackedPieces));
+								System.out.println("AttackMove for occupied tile");
+
+								final Move checkMove = new AdditionalAttackMove(board, this, candidateDestinationCoordinate, this.attackedPieces);
+								final AttackKingDama checkAttackKingDama = new AttackKingDama(candidateDestinationCoordinate,
+																							  this.pieceAlliance, this.attackedPieces,
+																							  this.getMoveCoordinates(candidateCoordinateOffset));
+								for(final int coordinate : this.getMoveCoordinates(candidateCoordinateOffset)) {
+									System.out.println(coordinate);
+								}
+								System.out.println(checkMove.execute());
+								legalAttackMoves.addAll(checkAttackKingDama.calculateLegalMoves(checkMove.execute()));
 							}
 						}
 					}
-
+					while(!legalAttackMoves.isEmpty()) {
+						final List<Move> addLegalAttackMoves = new ArrayList<>();
+						addLegalAttackMoves.addAll(legalAttackMoves);
+						legalAttackMoves.clear();
+						for(final Move move : addLegalAttackMoves) {
+							legalMoves.add(new AttackMove(board, this, move.getDestinationCoordinate(), move.getAttackedPieces()));
+							int[] moveCoordinates = this.getMoveCoordinates(move.getDestinationCoordinate() - move.getCurrentCoordinate());
+							AttackKingDama attackKingDama = new AttackKingDama(move.getDestinationCoordinate(), this.pieceAlliance, move.getAttackedPieces(), moveCoordinates);
+							legalAttackMoves.addAll(attackKingDama.calculateLegalMoves(move.execute()));
+						}
+					}
 				}
 			}
 		}
@@ -101,7 +135,7 @@ public class KingDama extends Piece {
 		return false;
 	}
 
-	private int[] getAdditionalMoveCoordinates(final int coordinateOffset) {
-		return (Math.abs(coordinateOffset) == 7) ? {-7, 7} : {-9, 9};
+	private int[] getMoveCoordinates(final int coordinateOffset) {
+		return (Math.abs(coordinateOffset) == 7) ? new int[] {-9, 9} : new int[] {-7, 7};
 	}
 }

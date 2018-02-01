@@ -58,10 +58,11 @@ public class AttackKingDama extends Piece {
 						final Alliance pieceAlliance = candidateAttackPiece.getPieceAlliance();
 						candidateDestinationCoordinate += candidateCoordinateOffset;
 
-						if(this.pieceAlliance != pieceAlliance &&
-						   BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
+						if(BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
 							final Tile candidateAttackDestinationTile = board.getTile(candidateDestinationCoordinate);
-							if(!BoardUtils.isTileOnTheEdge(candidateAttackPiece.getPiecePosition()) &&
+							if(candidateAttackDestinationTile.isTileOccupied()) break;
+							if(this.pieceAlliance != pieceAlliance &&
+							   !BoardUtils.isTileOnTheEdge(candidateAttackPiece.getPiecePosition()) &&
 						   	   !candidateAttackDestinationTile.isTileOccupied()) {
 								addedPieces.add(candidateAttackPiece);
 								legalMoves.add(new AdditionalAttackMove(board, this, candidateDestinationCoordinate, addedPieces));
@@ -78,7 +79,8 @@ public class AttackKingDama extends Piece {
 
 	@Override
 	public AttackKingDama movePiece(Move move) {
-		return new AttackKingDama(move.getDestinationCoordinate(), move.getMovedPiece().getPieceAlliance());
+		int[] moveCoordinates = this.getMoveCoordinates(move.getDestinationCoordinate() - move.getCurrentCoordinate());
+		return new AttackKingDama(move.getDestinationCoordinate(), move.getMovedPiece().getPieceAlliance(), move.getAttackedPieces(), moveCoordinates);
 	}
 
 	@Override
@@ -99,5 +101,9 @@ public class AttackKingDama extends Piece {
 			if(move.getDestinationCoordinate() == destinationCoordinate && move instanceof AttackMove) return true;
 		}
 		return false;
+	}
+
+	private int[] getMoveCoordinates(final int coordinateOffset) {
+		return (Math.abs(coordinateOffset) == 7) ? new int[] {-9, 9} : new int[] {-7, 7};
 	}
 }

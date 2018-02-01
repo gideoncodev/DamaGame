@@ -34,25 +34,26 @@ public class AttackDama extends Piece {
 			if(isFirstColumnExclusion(this.pieceAlliance, this.piecePosition, candidateCoordinateOffset) ||
 				isLastColumnExclusion(this.pieceAlliance, this.piecePosition, candidateCoordinateOffset)) continue;
 
-			final int candidateCoordinate = this.piecePosition + (this.pieceAlliance.getDirections() * candidateCoordinateOffset);	
+			int candidateDestinationCoordinate = this.piecePosition + (this.pieceAlliance.getDirections() * candidateCoordinateOffset);	
 			
 			final List<Piece> addedPieces = new ArrayList<>();
 			addedPieces.addAll(this.attackedPieces);
 
-			if(BoardUtils.isValidTileCoordinate(candidateCoordinate)) {
-				final Tile candidateDestinationTile = board.getTile(candidateCoordinate);
+			if(BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
+				final Tile candidateDestinationTile = board.getTile(candidateDestinationCoordinate);
 				if(candidateDestinationTile.isTileOccupied()){
 					final Piece candidateAttackPiece = candidateDestinationTile.getPiece();
 					final Alliance pieceAlliance = candidateAttackPiece.getPieceAlliance();
-					final int attackCandidateDestinationCoordinate = candidateCoordinate +
-																	 (this.pieceAlliance.getDirections() * candidateCoordinateOffset);
+					candidateDestinationCoordinate += (this.pieceAlliance.getDirections() * candidateCoordinateOffset);
 					
-					if(this.pieceAlliance != pieceAlliance && BoardUtils.isValidTileCoordinate(attackCandidateDestinationCoordinate)) {
-						final Tile candidateAttackDestinationTile = board.getTile(attackCandidateDestinationCoordinate);
-						if(!BoardUtils.isTileOnTheEdge(candidateAttackPiece.getPiecePosition()) &&
+					if(BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
+						final Tile candidateAttackDestinationTile = board.getTile(candidateDestinationCoordinate);
+						if(candidateAttackDestinationTile.isTileOccupied()) continue;
+						if(this.pieceAlliance != pieceAlliance && 
+						   !BoardUtils.isTileOnTheEdge(candidateAttackPiece.getPiecePosition()) &&
 						   !candidateAttackDestinationTile.isTileOccupied()) {
 						   	addedPieces.add(candidateAttackPiece);
-							legalMoves.add(new AdditionalAttackMove(board, this, attackCandidateDestinationCoordinate, addedPieces));
+							legalMoves.add(new AdditionalAttackMove(board, this, candidateDestinationCoordinate, addedPieces));
 						}
 					}
 				}
