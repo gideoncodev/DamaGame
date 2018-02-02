@@ -48,16 +48,12 @@ public class KingDama extends Piece {
 							legalMoves.add(new NormalMove(board, this, candidateDestinationCoordinate));
 						} else {
 							legalMoves.add(new AttackMove(board, this, candidateDestinationCoordinate, this.attackedPieces));
-							System.out.println("AttackMove for empty tile");
 
 							final Move checkMove = new AdditionalAttackMove(board, this, candidateDestinationCoordinate, this.attackedPieces);
 							final AttackKingDama checkAttackKingDama = new AttackKingDama(candidateDestinationCoordinate,
 																						  this.pieceAlliance, this.attackedPieces,
 																						  this.getMoveCoordinates(candidateCoordinateOffset));
-							for(final int coordinate : this.getMoveCoordinates(candidateCoordinateOffset)) {
-								System.out.println(coordinate);
-							}
-							System.out.println(checkMove.execute());
+
 							legalAttackMoves.addAll(checkAttackKingDama.calculateLegalMoves(checkMove.execute()));
 
 						}
@@ -77,16 +73,12 @@ public class KingDama extends Piece {
 						   	   !candidateAttackDestinationTile.isTileOccupied()) {
 								this.attackedPieces.add(candidateAttackPiece);
 								legalMoves.add(new AttackMove(board, this, candidateDestinationCoordinate, this.attackedPieces));
-								System.out.println("AttackMove for occupied tile");
 
 								final Move checkMove = new AdditionalAttackMove(board, this, candidateDestinationCoordinate, this.attackedPieces);
 								final AttackKingDama checkAttackKingDama = new AttackKingDama(candidateDestinationCoordinate,
 																							  this.pieceAlliance, this.attackedPieces,
 																							  this.getMoveCoordinates(candidateCoordinateOffset));
-								for(final int coordinate : this.getMoveCoordinates(candidateCoordinateOffset)) {
-									System.out.println(coordinate);
-								}
-								System.out.println(checkMove.execute());
+
 								legalAttackMoves.addAll(checkAttackKingDama.calculateLegalMoves(checkMove.execute()));
 							}
 						}

@@ -28,4 +28,9 @@ public class BlackPlayer extends Player {
 	public Player getOpponent() {
 		return this.board.getPlayer(Alliance.WHITE);
 	}
+
+	@Override
+	public String toString() {
+		return Alliance.BLACK.toString();
+	}
 }
