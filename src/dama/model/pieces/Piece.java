@@ -60,19 +60,29 @@ public abstract class Piece {
 		return this.pieceType;
 	}
 
+	public int getPieceValue() {
+		return this.pieceType.getPieceValue();
+	}
+
 	public abstract Collection<Move> calculateLegalMoves(final Board board);
 
 	public abstract Piece movePiece(final Move move);
 
 	public enum PieceType {
 
-		DAMA("D"),
-		KINGDAMA("KD");
+		DAMA(10, "D"),
+		KINGDAMA(50, "KD");
 
+		private final int value;
 		private final String pieceName;
 
-		PieceType(final String pieceName) {
+		PieceType(final int value, final String pieceName) {
+			this.value = value;
 			this.pieceName = pieceName;
+		}
+
+		public int getPieceValue() {
+			return this.value;
 		}
 
 		@Override
