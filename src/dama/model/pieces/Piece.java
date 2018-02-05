@@ -70,8 +70,18 @@ public abstract class Piece {
 
 	public enum PieceType {
 
-		DAMA(10, "D"),
-		KINGDAMA(50, "KD");
+		DAMA(10, "D") {
+			@Override
+			public boolean isKingDama() {
+				return false;
+			}
+		},
+		KINGDAMA(50, "KD") {
+			@Override
+			public boolean isKingDama() {
+				return true;
+			}
+		};
 
 		private final int value;
 		private final String pieceName;
@@ -89,5 +99,7 @@ public abstract class Piece {
 		public String toString() {
 			return this.pieceName;
 		}
+
+		public abstract boolean isKingDama();
 	}
 }

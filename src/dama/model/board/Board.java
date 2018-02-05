@@ -30,19 +30,9 @@ public final class Board {
 		final Collection<Move> whiteStandardLegalMove = calculateLegalMoves(this.whitePieces);
 		final Collection<Move> blackStandardLegalMove = calculateLegalMoves(this.blackPieces);
 
-		this.whitePlayer = new WhitePlayer(this, whiteStandardLegalMove, blackStandardLegalMove);
-		this.blackPlayer = new BlackPlayer(this, whiteStandardLegalMove, blackStandardLegalMove);
+		this.whitePlayer = new WhitePlayer(this, whiteStandardLegalMove);
+		this.blackPlayer = new BlackPlayer(this, blackStandardLegalMove);
 		this.currentPlayer = builder.nextMoveMaker.choosePlayer(this.whitePlayer, this.blackPlayer);
-	}
-
-	private Board(final Builder builder, final boolean falseBoard) {
-		this.gameBoard = createGameBoard(builder);
-		this.whitePieces = calculateActivePieces(this.gameBoard, Alliance.WHITE);
-		this.blackPieces = calculateActivePieces(this.gameBoard, Alliance.BLACK);
-
-		this.whitePlayer = null;
-		this.blackPlayer = null;
-		this.currentPlayer = null;
 	}
 	
 	public Tile getTile(final int tileCoordinate) {
@@ -173,10 +163,6 @@ public final class Board {
 
 		public Board build() {
 			return new Board(this);
-		}
-
-		public Board build(final boolean falseBoard) {
-			return new Board(this, falseBoard);
 		}
 	}
 }

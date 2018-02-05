@@ -18,11 +18,10 @@ public abstract class Player {
 	private final boolean isGameOver;
 
 	Player(final Board board,
-		   final Collection<Move> playerMoves,
-		   final Collection<Move> opponentMoves) {
+		   final Collection<Move> playerMoves) {
 		this.board = board;
 		this.legalMoves = playerMoves;
-		this.isGameOver = Player.calculateOpponentMoves(opponentMoves).isEmpty();
+		this.isGameOver = this.getActivePieces().isEmpty();
 	}
 
 	public Collection<Move> getLegalMoves() {

@@ -1,8 +1,5 @@
 package dama.model.board;
 
-import dama.model.board.Board;
-import dama.model.board.Move;
-
 public class MoveTransition {
 
 	private final Board transitionBoard;

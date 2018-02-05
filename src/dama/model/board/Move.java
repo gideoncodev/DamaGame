@@ -255,7 +255,7 @@ public abstract class Move {
 			builder.setMoveMaker(this.movedPiece.getPieceAlliance());
 
 
-			return builder.build(true);
+			return builder.build();
 		}
 
 	}
