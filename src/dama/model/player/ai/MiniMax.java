@@ -99,5 +99,4 @@ public class MiniMax implements MoveStrategy {
 	private static boolean isEndGameScenario(final Board board) {
 		return board.getCurrentPlayer().isGameOver();
 	}
-
 }

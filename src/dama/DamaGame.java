@@ -27,4 +27,3 @@ public class DamaGame extends Application {
 	}
 
 }
-
