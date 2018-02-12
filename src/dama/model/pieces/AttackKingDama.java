@@ -28,20 +28,18 @@ public class AttackKingDama extends Piece {
 
 	@Override
 	public Collection<Move> calculateLegalMoves(final Board board) {
-
 		final List<Move> legalMoves = new ArrayList<>();
-
 		for(final int candidateCoordinateOffset : this.candidateMoveCoordinates) {
 			
 			int candidateDestinationCoordinate = this.piecePosition;
-			final List<Piece> addedPieces = new ArrayList<>();
-			addedPieces.addAll(this.attackedPieces);
 
 			while(BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
 				if(isFirstColumnExclusion(candidateDestinationCoordinate, candidateCoordinateOffset) ||
 				   isLastColumnExclusion(candidateDestinationCoordinate, candidateCoordinateOffset)) break;
 
 				candidateDestinationCoordinate += candidateCoordinateOffset;
+				final List<Piece> addedPieces = new ArrayList<>();
+				addedPieces.addAll(this.attackedPieces);
 
 				if(BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
 					final Tile candidateDestinationTile = board.getTile(candidateDestinationCoordinate);
@@ -60,7 +58,7 @@ public class AttackKingDama extends Piece {
 
 						if(BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
 							final Tile candidateAttackDestinationTile = board.getTile(candidateDestinationCoordinate);
-							if(candidateAttackDestinationTile.isTileOccupied()) break;
+							if(candidateAttackDestinationTile.isTileOccupied() || this.pieceAlliance == pieceAlliance) break;
 							if(this.pieceAlliance != pieceAlliance &&
 							   !BoardUtils.isTileOnTheEdge(candidateAttackPiece.getPiecePosition()) &&
 						   	   !candidateAttackDestinationTile.isTileOccupied()) {
@@ -85,7 +83,7 @@ public class AttackKingDama extends Piece {
 
 	@Override
 	public String toString() {
-		return Piece.PieceType.KINGDAMA.toString();
+		return "Attack " + Piece.PieceType.KINGDAMA.toString();
 	}
 
 	private static boolean isFirstColumnExclusion(final int currentPosition, final int candidateOffset) {

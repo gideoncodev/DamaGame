@@ -70,7 +70,7 @@ public class AttackDama extends Piece {
 
 	@Override
 	public String toString() {
-		return Piece.PieceType.DAMA.toString();
+		return "Attack " + Piece.PieceType.DAMA.toString();
 	}
 
 	private static boolean isFirstColumnExclusion(final Alliance currentAlliance, final int currentPosition, final int candidateOffset) {

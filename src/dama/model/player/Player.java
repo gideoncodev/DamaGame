@@ -36,28 +36,12 @@ public abstract class Player {
 		return ImmutableList.copyOf(attackMoves);
 	}
 
-	// static Collection<Move> calculateAttacksOnTile(final int tile,
- //                                                   final Collection<Move> moves) {
- //        final List<Move> attackMoves = new ArrayList<>();
- //        for (final Move move : moves) {
- //            if (tile == move.getDestinationCoordinate()) {
- //                attackMoves.add(move);
- //            }
- //        }
- //        return ImmutableList.copyOf(attackMoves);
- //    }
-
 	public boolean isMoveLegal(final Move move) {
 		return this.legalMoves.contains(move);
 	}
 
 	public boolean isGameOver() {
 		return this.isGameOver;
-	}
-
-	// TODO check for stalemate status 
-	public boolean isStaleMate() {
-		return false;
 	}
 
 	public boolean hasMoves() {

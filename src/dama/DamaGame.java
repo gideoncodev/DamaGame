@@ -19,10 +19,6 @@ public class DamaGame extends Application {
 	}
 
 	public static void main(String[] args) {
-		Board board = Board.createStandardBoard();
-
-		System.out.println(board);
-
 		launch(args);
 	}
 

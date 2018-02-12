@@ -13,23 +13,20 @@ import java.util.*;
 
 public class KingDama extends Piece {
 
-	private List<Piece> attackedPieces;
-
 	private static final int[] CANDIDATE_MOVE_COORDINATES = { -9, -7, 7, 9 };
 
 	public KingDama(final int piecePosition,
 					final Alliance pieceAlliance) {
 		super(PieceType.KINGDAMA, piecePosition, pieceAlliance);
-		this.attackedPieces = new ArrayList<>();
 	}
 
 	@Override
 	public Collection<Move> calculateLegalMoves(final Board board) {
-
 		final List<Move> legalMoves = new ArrayList<>();
 
 		for(final int candidateCoordinateOffset : CANDIDATE_MOVE_COORDINATES) {
-			
+
+			final List<Piece> attackedPieces = new ArrayList<>();
 			int candidateDestinationCoordinate = this.piecePosition;
 
 			while(BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
@@ -42,18 +39,17 @@ public class KingDama extends Piece {
 
 				if(BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
 					final Tile candidateDestinationTile = board.getTile(candidateDestinationCoordinate);
-
 					if(!candidateDestinationTile.isTileOccupied()) {
 						if(!hasPreviousAttackMove(legalMoves, (candidateDestinationCoordinate - candidateCoordinateOffset))) {
 							legalMoves.add(new NormalMove(board, this, candidateDestinationCoordinate));
 						} else {
-							legalMoves.add(new AttackMove(board, this, candidateDestinationCoordinate, this.attackedPieces));
+							legalMoves.add(new AttackMove(board, this, candidateDestinationCoordinate, attackedPieces));
 
-							final Move checkMove = new AdditionalAttackMove(board, this, candidateDestinationCoordinate, this.attackedPieces);
+							final Move checkMove = new AdditionalAttackMove(board, this, candidateDestinationCoordinate, attackedPieces);
 							final AttackKingDama checkAttackKingDama = new AttackKingDama(candidateDestinationCoordinate,
-																						  this.pieceAlliance, this.attackedPieces,
+																						  this.pieceAlliance, attackedPieces,
 																						  this.getMoveCoordinates(candidateCoordinateOffset));
-
+							
 							legalAttackMoves.addAll(checkAttackKingDama.calculateLegalMoves(checkMove.execute()));
 
 						}
@@ -67,18 +63,23 @@ public class KingDama extends Piece {
 
 						if(BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
 							final Tile candidateAttackDestinationTile = board.getTile(candidateDestinationCoordinate);
-							if(candidateAttackDestinationTile.isTileOccupied()) break;
+							if(candidateAttackDestinationTile.isTileOccupied() || this.pieceAlliance == pieceAlliance) break;
 							if(this.pieceAlliance != pieceAlliance &&
 							   !BoardUtils.isTileOnTheEdge(candidateAttackPiece.getPiecePosition()) &&
 						   	   !candidateAttackDestinationTile.isTileOccupied()) {
-								this.attackedPieces.add(candidateAttackPiece);
-								legalMoves.add(new AttackMove(board, this, candidateDestinationCoordinate, this.attackedPieces));
+						   	   	attackedPieces.add(candidateAttackPiece);
+								legalMoves.add(new AttackMove(board, this, candidateDestinationCoordinate, attackedPieces));
 
-								final Move checkMove = new AdditionalAttackMove(board, this, candidateDestinationCoordinate, this.attackedPieces);
+								final Move checkMove = new AdditionalAttackMove(board,
+																				new AttackKingDama(this.piecePosition,
+																								   this.pieceAlliance,
+																								   attackedPieces,
+																								   this.getMoveCoordinates(candidateDestinationCoordinate)),
+																				candidateDestinationCoordinate, attackedPieces);
 								final AttackKingDama checkAttackKingDama = new AttackKingDama(candidateDestinationCoordinate,
-																							  this.pieceAlliance, this.attackedPieces,
+																							  this.pieceAlliance, attackedPieces,
 																							  this.getMoveCoordinates(candidateCoordinateOffset));
-
+								
 								legalAttackMoves.addAll(checkAttackKingDama.calculateLegalMoves(checkMove.execute()));
 							}
 						}
@@ -97,9 +98,7 @@ public class KingDama extends Piece {
 				}
 			}
 		}
-
 		return ImmutableList.copyOf(legalMoves);
-
 	}
 
 	@Override

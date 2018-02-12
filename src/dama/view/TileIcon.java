@@ -23,6 +23,7 @@ public class TileIcon extends Pane {
 	private final int tileId;
 	private BoardPane boardPane;
 	private Collection<Move> selectedPieceLegalMoves;
+	private boolean isTileSelected;
 
 	private final static int TILE_SIZE = 90;
 
@@ -30,6 +31,7 @@ public class TileIcon extends Pane {
 					final int tileId) {
 		this.boardPane = boardPane;
 		this.tileId = tileId;
+		this.isTileSelected = false;
 		this.selectedPieceLegalMoves = new ArrayList<>();
 		this.setPrefSize(TILE_SIZE, TILE_SIZE);
 		this.setTileColor(this.boardPane.getBoard());
@@ -40,11 +42,7 @@ public class TileIcon extends Pane {
 
 	private final void setTileColor(final Board board) {
 		final boolean light = ((this.tileId / BoardUtils.NUM_TILES_PER_ROW) + (this.tileId % BoardUtils.NUM_TILES_PER_ROW)) % 2 == 0;
-		final boolean isTileSelected = board.getTile(this.tileId).isTileOccupied() &&
-									   board.getCurrentPlayer().getAlliance() == board.getTile(this.tileId).getPiece().getPieceAlliance() &&
-									   this.boardPane.getSelectedPiece() != null &&
-								   	   this.boardPane.getSelectedPiece().getPiecePosition() == this.tileId;
-		if(isTileSelected) {
+		if(this.isTileSelected && this.isTileHasMoves(board)) {
 			this.setStyle("-fx-background-color: #9F0000;");
 		} else {
 			this.setStyle(light ? "-fx-background-color: #FEB;" : "-fx-background-color: #582;");
@@ -56,12 +54,12 @@ public class TileIcon extends Pane {
 			this.setCursor(Cursor.HAND);
 			if(board.getTile(this.tileId).getPiece().getPieceType().isKingDama()) {
 				PieceIcon pieceIcon = new PieceIcon(board.getTile(this.tileId).getPiece().getPieceAlliance(),
-													isTileHasMoves(board) && this.boardPane.getSelectedPiece() == null);
+													this.isTileHasMoves(board) && !this.isTileSelected);
 				CrownIcon crownIcon = new CrownIcon();
 				this.getChildren().addAll(pieceIcon, crownIcon);
 			} else {
 				this.getChildren().add(new PieceIcon(board.getTile(this.tileId).getPiece().getPieceAlliance(),
-													 isTileHasMoves(board) && this.boardPane.getSelectedPiece() == null));
+													 this.isTileHasMoves(board) && !this.isTileSelected));
 			}
 		}
 	}
@@ -100,6 +98,10 @@ public class TileIcon extends Pane {
 	}
 
 	public void drawTile(final Board board) {
+		this.isTileSelected = board.getTile(this.tileId).isTileOccupied() &&
+						      board.getCurrentPlayer().getAlliance() == board.getTile(this.tileId).getPiece().getPieceAlliance() &&
+						      this.boardPane.getSelectedPiece() != null &&
+					   	      this.boardPane.getSelectedPiece().getPiecePosition() == this.tileId;
 		this.setTileColor(board);
 		this.setTileEmpty();
 		this.setTilePiece(board);
