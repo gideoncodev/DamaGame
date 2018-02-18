@@ -14,7 +14,7 @@ public class DamaGame extends Application {
 		stage.setTitle("Dama");
 		stage.setResizable(false);
 		stage.sizeToScene();
-		stage.setScene(new Scene(new GameBoard()));
+		stage.setScene(new Scene(GameBoard.get()));
 		stage.show();
 	}
 

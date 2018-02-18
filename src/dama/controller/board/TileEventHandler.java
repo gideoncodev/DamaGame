@@ -1,6 +1,7 @@
 package dama.controller.board;
 
 import dama.view.TileIcon;
+import dama.view.GameBoard;
 import dama.model.board.Move;
 import dama.model.board.MoveTransition;
 import static dama.model.board.Move.MoveFactory;
@@ -21,21 +22,21 @@ public class TileEventHandler implements EventHandler<MouseEvent> {
 	@Override
 	public void handle(final MouseEvent mouseEvent) {
 		if(mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
-			if(this.tileIcon.getBoardPane().getSourceTile() == null) {
-				this.tileIcon.getBoardPane().setSourceTile(this.tileIcon.getBoardPane().getBoard().getTile(this.tileIcon.getTileId()));
-				this.tileIcon.getBoardPane().setSelectedPiece(this.tileIcon.getBoardPane().getSourceTile().getPiece());
-				if(this.tileIcon.getBoardPane().getSelectedPiece() == null) {
-					this.tileIcon.getBoardPane().setSourceTile(null);
+			if(GameBoard.get().getBoardPane().getSourceTile() == null) {
+				GameBoard.get().getBoardPane().setSourceTile(GameBoard.get().getBoardPane().getBoard().getTile(this.tileIcon.getTileId()));
+				GameBoard.get().getBoardPane().setSelectedPiece(GameBoard.get().getBoardPane().getSourceTile().getPiece());
+				if(GameBoard.get().getBoardPane().getSelectedPiece() == null) {
+					GameBoard.get().getBoardPane().setSourceTile(null);
 				} else {
-					if(this.tileIcon.getBoardPane().getSelectedPiece().getPieceAlliance() !=
-					   this.tileIcon.getBoardPane().getBoard().getCurrentPlayer().getAlliance()){
-						this.tileIcon.getBoardPane().setSourceTile(null);
-						this.tileIcon.getBoardPane().setSelectedPiece(null);
+					if(GameBoard.get().getBoardPane().getSelectedPiece().getPieceAlliance() !=
+					   GameBoard.get().getBoardPane().getBoard().getCurrentPlayer().getAlliance()){
+						GameBoard.get().getBoardPane().setSourceTile(null);
+						GameBoard.get().getBoardPane().setSelectedPiece(null);
 					}
 				}
 			} else {
 				boolean validTile = false;
-				final Tile secondTile = this.tileIcon.getBoardPane().getBoard().getTile(this.tileIcon.getTileId());
+				final Tile secondTile = GameBoard.get().getBoardPane().getBoard().getTile(this.tileIcon.getTileId());
 
 				for(final Move move : this.tileIcon.getSelectedPieceLegalMoves()) {
 					if(move.getDestinationCoordinate() == secondTile.getTileCoordinate()) {
@@ -45,40 +46,41 @@ public class TileEventHandler implements EventHandler<MouseEvent> {
 				}
 
 				if(secondTile.isTileOccupied()) {
-					this.tileIcon.getBoardPane().setSourceTile(secondTile);
-					this.tileIcon.getBoardPane().setSelectedPiece(this.tileIcon.getBoardPane().getSourceTile().getPiece());
-					if(this.tileIcon.getBoardPane().getSelectedPiece() == null) {
-						this.tileIcon.getBoardPane().setSourceTile(null);
+					GameBoard.get().getBoardPane().setSourceTile(secondTile);
+					GameBoard.get().getBoardPane().setSelectedPiece(GameBoard.get().getBoardPane().getSourceTile().getPiece());
+					if(GameBoard.get().getBoardPane().getSelectedPiece() == null) {
+						GameBoard.get().getBoardPane().setSourceTile(null);
 					} else {
-						if(this.tileIcon.getBoardPane().getSelectedPiece().getPieceAlliance() !=
-						   this.tileIcon.getBoardPane().getBoard().getCurrentPlayer().getAlliance()){
-							this.tileIcon.getBoardPane().setSourceTile(null);
-							this.tileIcon.getBoardPane().setSelectedPiece(null);
+						if(GameBoard.get().getBoardPane().getSelectedPiece().getPieceAlliance() !=
+						   GameBoard.get().getBoardPane().getBoard().getCurrentPlayer().getAlliance()){
+							GameBoard.get().getBoardPane().setSourceTile(null);
+							GameBoard.get().getBoardPane().setSelectedPiece(null);
 						}
 					}
 				} else if(!validTile) {
-					this.tileIcon.getBoardPane().setSourceTile(null);
-					this.tileIcon.getBoardPane().setDestinationTile(null);
-					this.tileIcon.getBoardPane().setSelectedPiece(null);
+					GameBoard.get().getBoardPane().setSourceTile(null);
+					GameBoard.get().getBoardPane().setDestinationTile(null);
+					GameBoard.get().getBoardPane().setSelectedPiece(null);
 				} else {
-					this.tileIcon.getBoardPane().setDestinationTile(secondTile);
-					final Move move = MoveFactory.createMove(this.tileIcon.getBoardPane().getBoard(),
-															 this.tileIcon.getBoardPane().getSourceTile().getTileCoordinate(),
-															 this.tileIcon.getBoardPane().getDestinationTile().getTileCoordinate());
-					final MoveTransition moveTransition = this.tileIcon.getBoardPane().getBoard().getCurrentPlayer().makeMove(move);
+					GameBoard.get().getBoardPane().setDestinationTile(secondTile);
+					final Move move = MoveFactory.createMove(GameBoard.get().getBoardPane().getBoard(),
+															 GameBoard.get().getBoardPane().getSourceTile().getTileCoordinate(),
+															 GameBoard.get().getBoardPane().getDestinationTile().getTileCoordinate());
+					final MoveTransition moveTransition = GameBoard.get().getBoardPane().getBoard().getCurrentPlayer().makeMove(move);
 					if(moveTransition.getMoveStatus().isDone()) {
-						this.tileIcon.getBoardPane().setBoard(moveTransition.getTransitionBoard());
+						GameBoard.get().getBoardPane().setBoard(moveTransition.getTransitionBoard());
+						GameBoard.get().getBoardProperty().setValue(GameBoard.get().getBoardPane().getBoard());
 					}
-					this.tileIcon.getBoardPane().setSourceTile(null);
-					this.tileIcon.getBoardPane().setDestinationTile(null);
-					this.tileIcon.getBoardPane().setSelectedPiece(null);
+					GameBoard.get().getBoardPane().setSourceTile(null);
+					GameBoard.get().getBoardPane().setDestinationTile(null);
+					GameBoard.get().getBoardPane().setSelectedPiece(null);
 				}
 			}
 
 			Platform.runLater(new Runnable() {
 				@Override
 				public void run() {
-					tileIcon.getBoardPane().drawBoard(tileIcon.getBoardPane().getBoard());
+					GameBoard.get().getBoardPane().drawBoard(GameBoard.get().getBoardPane().getBoard());
 				}
 			});
 		}

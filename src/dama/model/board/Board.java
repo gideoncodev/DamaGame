@@ -23,13 +23,13 @@ public final class Board {
 	private final Player currentPlayer;
 
 	private Board(final Builder builder) {
-		this.gameBoard = createGameBoard(builder);
-		this.whitePieces = calculateActivePieces(this.gameBoard, Alliance.WHITE);
-		this.blackPieces = calculateActivePieces(this.gameBoard, Alliance.BLACK);
+		this.gameBoard = this.createGameBoard(builder);
+		this.whitePieces = this.calculateActivePieces(this.gameBoard, Alliance.WHITE);
+		this.blackPieces = this.calculateActivePieces(this.gameBoard, Alliance.BLACK);
 
-		final Collection<Move> whiteStandardLegalMove = calculateLegalMoves(this.whitePieces);
-		final Collection<Move> blackStandardLegalMove = calculateLegalMoves(this.blackPieces);
-
+		final Collection<Move> whiteStandardLegalMove = this.calculateLegalMoves(this.whitePieces);
+		final Collection<Move> blackStandardLegalMove = this.calculateLegalMoves(this.blackPieces);
+		
 		this.whitePlayer = new WhitePlayer(this, whiteStandardLegalMove);
 		this.blackPlayer = new BlackPlayer(this, blackStandardLegalMove);
 		this.currentPlayer = builder.nextMoveMaker.choosePlayer(this.whitePlayer, this.blackPlayer);

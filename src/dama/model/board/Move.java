@@ -100,7 +100,6 @@ public abstract class Move {
 		builder.setPiece(this.movedPiece.movePiece(this));
 		builder.setMoveMaker(this.board.getCurrentPlayer().getOpponent().getAlliance());
 
-
 		return builder.build();
 	}
 
@@ -158,6 +157,11 @@ public abstract class Move {
 		}
 
 		@Override
+		public String toString() {
+			return "Attack Move";
+		}
+
+		@Override
 		public boolean isAttack() {
 			return true;
 		}
@@ -185,7 +189,6 @@ public abstract class Move {
 
 			builder.setPiece(this.movedPiece.movePiece(this));
 			builder.setMoveMaker(this.board.getCurrentPlayer().getOpponent().getAlliance());
-
 
 			return builder.build();
 		}
@@ -223,6 +226,11 @@ public abstract class Move {
 			final AdditionalAttackMove otherAttackMove = (AdditionalAttackMove) other;
 			return super.equals(otherAttackMove) &&
 				   this.getAttackedPieces().equals(otherAttackMove.getAttackedPieces());
+		}
+
+		@Override
+		public String toString() {
+			return "Additional Attack Move";
 		}
 
 		@Override
