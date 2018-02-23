@@ -51,7 +51,7 @@ public class TileIcon extends Pane {
 
 	private void setTilePiece(final Board board) {
 		if(board.getTile(this.tileId).isTileOccupied()) {
-			this.setCursor(Cursor.HAND);
+			if(board.getCurrentPlayer().getAlliance() == board.getTile(this.tileId).getPiece().getPieceAlliance()) this.setCursor(Cursor.HAND);
 			if(board.getTile(this.tileId).getPiece().getPieceType().isKingDama()) {
 				PieceIcon pieceIcon = new PieceIcon(board.getTile(this.tileId).getPiece().getPieceAlliance(),
 													this.isTileHasMoves(board) && !this.isTileSelected);

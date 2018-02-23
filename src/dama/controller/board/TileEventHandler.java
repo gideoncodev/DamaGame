@@ -69,7 +69,7 @@ public class TileEventHandler implements EventHandler<MouseEvent> {
 					final MoveTransition moveTransition = GameBoard.get().getBoardPane().getBoard().getCurrentPlayer().makeMove(move);
 					if(moveTransition.getMoveStatus().isDone()) {
 						GameBoard.get().getBoardPane().setBoard(moveTransition.getTransitionBoard());
-						GameBoard.get().getBoardProperty().setValue(GameBoard.get().getBoardPane().getBoard());
+						
 					}
 					GameBoard.get().getBoardPane().setSourceTile(null);
 					GameBoard.get().getBoardPane().setDestinationTile(null);
@@ -81,6 +81,7 @@ public class TileEventHandler implements EventHandler<MouseEvent> {
 				@Override
 				public void run() {
 					GameBoard.get().getBoardPane().drawBoard(GameBoard.get().getBoardPane().getBoard());
+					GameBoard.get().getBoardProperty().setValue(GameBoard.get().getBoardPane().getBoard());
 				}
 			});
 		}

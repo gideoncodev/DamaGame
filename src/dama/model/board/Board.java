@@ -39,6 +39,10 @@ public final class Board {
 		return this.gameBoard.get(tileCoordinate);
 	}
 
+	public List<Tile> getGameBoard() {
+		return this.gameBoard;
+	}
+
 	private static List<Tile> createGameBoard(final Builder builder) {
 		final Tile[] tiles = new Tile[BoardUtils.NUM_TILES];
 
@@ -47,6 +51,43 @@ public final class Board {
 		}
 
 		return ImmutableList.copyOf(tiles);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+
+		result = prime * result + this.whitePlayer.getLegalMoves().hashCode();
+		result = prime * result + this.whitePieces.hashCode();
+		result = prime * result + this.blackPlayer.getLegalMoves().hashCode();
+		result = prime * result + this.blackPieces.hashCode();
+
+		return result;
+
+	}
+
+	@Override
+	public boolean equals(final Object other) {
+		if(this == other) {
+			return true;
+		}
+
+		if(!(other instanceof Board)) {
+			return false;
+		}
+
+		final Board otherBoard = (Board) other;
+
+		boolean checkBoard = true;
+		for(final Tile tile : otherBoard.getGameBoard()) {
+			if(!(tile.isTileOccupied() == this.getTile(tile.getTileCoordinate()).isTileOccupied())) {
+				checkBoard = false;
+				break;
+			}
+		}
+
+		return checkBoard && this.toString().equals(otherBoard.toString());
 	}
 
 	@Override
