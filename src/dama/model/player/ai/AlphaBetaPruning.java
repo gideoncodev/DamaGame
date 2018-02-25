@@ -4,19 +4,19 @@ import dama.model.board.Board;
 import dama.model.board.Move;
 import dama.model.board.MoveTransition;
 
-public class MiniMax implements MoveStrategy {
+public class AlphaBetaPruning implements MoveStrategy {
 
 	private final BoardEvaluator boardEvaluator;
 	private final int searchDepth;
 
-	public MiniMax(final int searchDepth) {
+	public AlphaBetaPruning(final int searchDepth) {
 		this.boardEvaluator = StandardBoardEvaluator.get();
 		this.searchDepth = searchDepth;
 	}
 
 	@Override
 	public String toString() {
-		return "MiniMax";
+		return "AlphaBetaPruning";
 	}
 
 	@Override
@@ -58,7 +58,10 @@ public class MiniMax implements MoveStrategy {
 		return bestMove;
 	}
 
-	public int min(final Board board, final int depth) {
+	public int min(final Board board,
+				   final int depth,
+				   final int alpha,
+				   final int beta) {
 		if(depth == 0 || isEndGameScenario(board)) {
 			return this.boardEvaluator.evaluate(board, depth);
 		}
@@ -77,7 +80,10 @@ public class MiniMax implements MoveStrategy {
 		return lowestSeenValue;
 	}
 
-	public int max(final Board board, final int depth) {
+	public int max(final Board board,
+				   final int depth,
+				   final int alpha,
+				   final int beta) {
 		if(depth == 0 || isEndGameScenario(board)) {
 			return this.boardEvaluator.evaluate(board, depth);
 		}
