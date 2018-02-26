@@ -38,15 +38,13 @@ public class AlphaBetaPruning implements MoveStrategy {
 			final MoveTransition moveTransition = board.getCurrentPlayer().makeMove(move);
 			if(moveTransition.getMoveStatus().isDone()) {
 				currentValue = board.getCurrentPlayer().getAlliance().isWhite() ? 
-							   this.min(moveTransition.getTransitionBoard(), this.searchDepth - 1) :
-							   this.max(moveTransition.getTransitionBoard(), this.searchDepth - 1);
+							   this.min(moveTransition.getTransitionBoard(), this.searchDepth - 1, highestSeenValue, lowestSeenValue) :
+							   this.max(moveTransition.getTransitionBoard(), this.searchDepth - 1, highestSeenValue, lowestSeenValue);
 
-				if(board.getCurrentPlayer().getAlliance().isWhite() &&
-				   currentValue >= highestSeenValue) {
+				if(board.getCurrentPlayer().getAlliance().isWhite() && currentValue >= highestSeenValue) {
 				   	highestSeenValue = currentValue;
 				   	bestMove = move;
-				} else if(board.getCurrentPlayer().getAlliance().isBlack() &&
-						  currentValue <= lowestSeenValue) {
+				} else if(board.getCurrentPlayer().getAlliance().isBlack() && currentValue <= lowestSeenValue) {
 					lowestSeenValue = currentValue;
 					bestMove = move;
 				}
@@ -66,15 +64,14 @@ public class AlphaBetaPruning implements MoveStrategy {
 			return this.boardEvaluator.evaluate(board, depth);
 		}
 
-		int lowestSeenValue = Integer.MAX_VALUE;
+		int lowestSeenValue = beta;
 
 		for(final Move move : board.getCurrentPlayer().getLegalMoves()) {
 			final MoveTransition moveTransition = board.getCurrentPlayer().makeMove(move);
 			if(moveTransition.getMoveStatus().isDone()) {
-				final int currentValue = this.max(moveTransition.getTransitionBoard(), depth -1);
-				if(currentValue <= lowestSeenValue) {
-					lowestSeenValue = currentValue;
-				}
+				lowestSeenValue = Math.min(lowestSeenValue, this.max(moveTransition.getTransitionBoard(), depth - 1, alpha, lowestSeenValue));
+
+				if(lowestSeenValue <= alpha) break;
 			}
 		}
 		return lowestSeenValue;
@@ -88,15 +85,14 @@ public class AlphaBetaPruning implements MoveStrategy {
 			return this.boardEvaluator.evaluate(board, depth);
 		}
 
-		int highestSeenValue = Integer.MIN_VALUE;
+		int highestSeenValue = alpha;
 
 		for(final Move move : board.getCurrentPlayer().getLegalMoves()) {
 			final MoveTransition moveTransition = board.getCurrentPlayer().makeMove(move);
 			if(moveTransition.getMoveStatus().isDone()) {
-				final int currentValue = this.min(moveTransition.getTransitionBoard(), depth -1);
-				if(currentValue >= highestSeenValue) {
-					highestSeenValue = currentValue;
-				}
+				highestSeenValue = Math.max(highestSeenValue, this.min(moveTransition.getTransitionBoard(), depth - 1, highestSeenValue, beta));
+
+				if(highestSeenValue >= beta) break;
 			}
 		}
 		return highestSeenValue;
