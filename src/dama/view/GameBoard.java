@@ -7,6 +7,7 @@ import dama.model.board.Move;
 import dama.model.board.Tile;
 import dama.model.pieces.Piece;
 import dama.model.player.ai.MiniMax;
+import dama.model.player.ai.AlphaBetaPruning;
 
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
@@ -46,39 +47,13 @@ public class GameBoard extends BorderPane {
 	private final BoardPane boardPane;
 	private final PlayerType whitePlayerType = PlayerType.HUMAN;
 	private final PlayerType blackPlayerType = PlayerType.COMPUTER;
-	private final Map<Board, Move> blackAIBestMoves = new HashMap<>();
-	private final Map<Board, Move> whiteAIBestMoves = new HashMap<>();
-	private final ObjectProperty<Board> blackBoardAIUpdate = new SimpleObjectProperty<>();
 
 	private ObjectProperty<Board> boardProperty = new SimpleObjectProperty<>();
-	private boolean loadMoves = false;
-	private int numThreads = 0;
 
 	private static final GameBoard INSTANCE = new GameBoard();
-	private static final int MAX_THREAD = 20;
 
 	private GameBoard() {
 		this.boardPane = new BoardPane(Board.createStandardBoard());
-		if(this.hasAIPlayer()) {
-			if(this.whitePlayerType.isComputer()) {
-				this.startWhitePlayerAIService();
-			} else {
-				this.startBlackPlayerAIService();
-			}
-		}
-		this.blackBoardAIUpdate.addListener(new ChangeListener<Board>() {
-			@Override
-			public void changed(final ObservableValue ov,
-								final Board oldBoard,
-								final Board newBoard) {
-				if(GameBoard.get().getNumThreads() < MAX_THREAD) {
-					GameBoard.get().addNumThreads();
-					final Thread th = new Thread(new AIThink(newBoard));
-					th.setDaemon(true);
-					th.start();
-				}
-			}
-		});
 		this.boardProperty.addListener(new ChangeListener<Board>() {
 			@Override
 			public void changed(final ObservableValue ov,
@@ -92,21 +67,11 @@ public class GameBoard extends BorderPane {
 					gameOverAlert.showAndWait();
 				}
 
-				if(GameBoard.get().isAIPlayer(newBoard.getCurrentPlayer().getAlliance())) {
-					final Move bestMove = GameBoard.get().getBlackAIBestMoves().get(newBoard);
-					System.out.println(bestMove);
-					System.out.println(bestMove.getCurrentCoordinate());
-					System.out.println(bestMove.getDestinationCoordinate());
-					GameBoard.get().getBoardPane().setBoard(newBoard.getCurrentPlayer().makeMove(bestMove).getTransitionBoard());
-					GameBoard.get().getBoardPane().drawBoard(GameBoard.get().getBoardPane().getBoard());
+				if(GameBoard.get().isAIPlayer(newBoard.getCurrentPlayer().getAlliance())) {					
+					final Thread th = new Thread(new AIThink(newBoard));
+					th.setDaemon(true);
+					th.start();
 				}
-
-
-
-				// final AIThink aiThink = new AIThink();
-				// Thread th = new Thread(aiThink);
-				// th.setDaemon(true);
-				// th.start();
 			}
 		});
 		this.setCenter(this.boardPane);
@@ -124,36 +89,8 @@ public class GameBoard extends BorderPane {
 		return this.boardProperty;
 	}
 
-	public ObjectProperty<Board> getBlackBoardAIUpdate() {
-		return this.blackBoardAIUpdate;
-	}
-
-	public Map<Board, Move> getBlackAIBestMoves() {
-		return this.blackAIBestMoves;
-	}
-
-	public int getNumThreads() {
-		return this.numThreads;
-	}
-
 	public boolean isAIPlayer(final Alliance alliance) {
 		return alliance.isBlack() ? blackPlayerType.isComputer() : whitePlayerType.isComputer();
-	}
-
-	public boolean getLoadMoves() {
-		return this.loadMoves;
-	}
-
-	public void setLoadMoves(final boolean loadMoves){
-		this.loadMoves = loadMoves;
-	}
-
-	public void addNumThreads() {
-		this.numThreads++;
-	}
-
-	public void removeNumThreads() {
-		this.numThreads--;
 	}
 
 	protected enum PlayerType {
@@ -193,124 +130,6 @@ public class GameBoard extends BorderPane {
 		public abstract boolean isHuman();
 	}
 
-	private boolean hasAIPlayer() {
-		return whitePlayerType.isComputer() || blackPlayerType.isComputer();
-	}
-
-	private void startBlackPlayerAIService() {
-		final List<Board> checkBoards = new ArrayList<>();
-
-		//Loading stage
-		final Stage loadingStage = new Stage();
-		loadingStage.initModality(Modality.APPLICATION_MODAL);
-		loadingStage.initStyle(StageStyle.UNDECORATED);
-
-
-	    final HBox loadingLayout = new HBox(10);
-
-	    loadingLayout.setStyle("-fx-background-color: GREEN; -fx-padding: 10");
-	    loadingLayout.setCursor(Cursor.WAIT);
-
-	    final Label loadingLabel = new Label("Waiting for AI Moves ... ");
-	    loadingLabel.setStyle("-fx-font-size: 30px; -fx-padding: 20; -fx-text-fill: WHITE; -fx-background-color: GREEN;");
-	    loadingLayout.getChildren().add(loadingLabel);
-
-	    loadingStage.setScene(new Scene(loadingLayout));
-
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				loadingStage.show();
-			}
-		});
-
-		new Service<List<Board>>() {
-			@Override
-			protected void succeeded() {
-				if(!GameBoard.get().getLoadMoves()) {
-					GameBoard.get().setLoadMoves(true);
-					// checkBoards.clear();
-					// checkBoards.addAll(getValue());
-					// this.restart();	
-				}
-
-				if(GameBoard.get().getBlackAIBestMoves().size() > 1000) {
-					loadingStage.hide();
-				}
-
-				checkBoards.clear();
-				checkBoards.addAll(getValue());
-				this.restart();				
-			}
-
-			@Override
-			protected Task<List<Board>> createTask() {
-				return new Task<List<Board>>() {
-					@Override
-					protected List<Board> call() throws Exception {
-						final List<Board> boards = new ArrayList<>();
-						if(!GameBoard.get().getLoadMoves()) {
-							final Board aiBoard = Board.createStandardBoard();
-							for(final Move legalMove : aiBoard.getCurrentPlayer().getLegalMoves()) {
-								final Board transitionBoard = aiBoard.getCurrentPlayer().makeMove(legalMove).getTransitionBoard();
-								GameBoard.get().getBlackAIBestMoves().put(transitionBoard, null);
-								System.out.println(transitionBoard);
-								GameBoard.get().getBlackBoardAIUpdate().setValue(transitionBoard);
-								boards.add(transitionBoard);
-							}
-						} else {
-							for(final Board board : checkBoards) {
-								if(GameBoard.get().getBlackAIBestMoves().containsKey(board)){
-									if(GameBoard.get().getBlackAIBestMoves().get(board) != null) {
-										final Move move = GameBoard.get().getBlackAIBestMoves().get(board);
-										final Board aiBoard = board.getCurrentPlayer().makeMove(move).getTransitionBoard();
-										System.out.println("AI Board");
-										System.out.println(aiBoard);
-										for(final Move legalMove : aiBoard.getCurrentPlayer().getLegalMoves()) {
-											final Board transitionBoard = aiBoard.getCurrentPlayer().makeMove(legalMove).getTransitionBoard();
-											System.out.println("Transition Board");
-											System.out.println(transitionBoard);
-											GameBoard.get().getBlackAIBestMoves().put(transitionBoard, null);
-											GameBoard.get().getBlackBoardAIUpdate().setValue(transitionBoard);
-											boards.add(transitionBoard);
-										}
-									} else {
-										boards.add(board);
-									}
-								}
-							}
-						}
-						return boards;
-					}
-				};
-			}
-
-		}.start();
-	}
-
-	private void startWhitePlayerAIService() {
-		Board aiBoard = Board.createStandardBoard();
-
-		new Service<Move>() {
-			@Override
-			protected void succeeded() {
-				System.out.println(getValue());
-			}
-
-			@Override
-			protected Task<Move> createTask() {
-				return new Task<Move>() {
-					@Override
-					protected Move call() throws Exception {
-
-						return null;
-					}
-				};
-			}
-
-		}.start();
-	}
-
 	private static class AIThink extends Task<Move> {
 		private Board board;
 
@@ -320,15 +139,18 @@ public class GameBoard extends BorderPane {
 
 		@Override
 		protected Move call() throws Exception {
-			final MiniMax miniMax = new MiniMax(4);
-			final Move bestMove = miniMax.execute(this.board);
+			final AlphaBetaPruning alphaBetaPruning = new AlphaBetaPruning(4);
+			final Move bestMove = alphaBetaPruning.execute(this.board);
+			// final MiniMax miniMax = new MiniMax(4);
+			// final Move bestMove = miniMax.execute(this.board);
 			return bestMove;
 		}
 
 		@Override
 		protected void succeeded() {
-			GameBoard.get().getBlackAIBestMoves().put(this.board, getValue());
-			GameBoard.get().removeNumThreads();
+			final Move bestMove = getValue();
+			GameBoard.get().getBoardPane().setBoard(this.board.getCurrentPlayer().makeMove(bestMove).getTransitionBoard());
+			GameBoard.get().getBoardPane().drawBoard(GameBoard.get().getBoardPane().getBoard());
 		}
 	}
 

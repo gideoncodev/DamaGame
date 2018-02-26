@@ -1,13 +1,15 @@
 package dama.model.player.ai;
 
 import dama.model.board.Board;
+import dama.model.board.Move;
 import dama.model.Alliance;
 import dama.model.player.Player;
 import dama.model.pieces.Piece;
 
 public final class StandardBoardEvaluator implements BoardEvaluator {
-	private static final int GAME_OVER_BONUS = 50;
+	private static final int GAME_OVER_BONUS = 500;
 	private static final int DEPTH_BONUS = 100;
+	private static final int ATTACK_MULTIPLIER = 5;
 
 	private final static StandardBoardEvaluator INSTANCE = new StandardBoardEvaluator();
 
@@ -21,16 +23,16 @@ public final class StandardBoardEvaluator implements BoardEvaluator {
 	@Override
 	public int evaluate(final Board board,
 						final int depth) {
-		return this.scorePlayer(board, board.getPlayer(Alliance.WHITE), depth) - 
-			   this.scorePlayer(board, board.getPlayer(Alliance.BLACK), depth);
+		return this.scorePlayer(board.getPlayer(Alliance.WHITE), depth) - 
+			   this.scorePlayer(board.getPlayer(Alliance.BLACK), depth);
 	}
 
-	private int scorePlayer(final Board board,
-							final Player player,
+	private int scorePlayer(final Player player,
 							final int depth) {
 		return StandardBoardEvaluator.pieceValue(player) +
 			   StandardBoardEvaluator.mobility(player) +
-			   StandardBoardEvaluator.gameOver(player, depth);
+			   StandardBoardEvaluator.gameOver(player, depth) +
+			   StandardBoardEvaluator.attacks(player);
 	}
 
 	private static int pieceValue(final Player player) {
@@ -40,6 +42,17 @@ public final class StandardBoardEvaluator implements BoardEvaluator {
 		}
 
 		return pieceValueScore;
+	}
+
+	private static int attacks(final Player player) {
+		int attackScore = 0;
+		for(final Move move : player.getLegalMoves()) {
+			if(move.isAttack()) {
+				attackScore++;
+			}
+		}
+
+		return attackScore * ATTACK_MULTIPLIER;
 	}
 
 	private static int mobility(final Player player) {
