@@ -18,6 +18,7 @@ import javafx.concurrent.Task;
 import javafx.concurrent.Service;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
+import javafx.stage.Screen;
 import javafx.stage.Modality;
 import javafx.stage.StageStyle;
 import javafx.scene.Scene;
@@ -36,11 +37,13 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
+import javafx.geometry.Rectangle2D;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Optional;
 
 public class GameBoard extends BorderPane {
 
@@ -64,7 +67,12 @@ public class GameBoard extends BorderPane {
 					gameOverAlert.setTitle("GAME OVER!");
 					gameOverAlert.setHeaderText(newBoard.getCurrentPlayer().getOpponent() + " WINS!!!");
 					gameOverAlert.initStyle(StageStyle.UNDECORATED);
-					gameOverAlert.showAndWait();
+					Optional<ButtonType> result = gameOverAlert.showAndWait();
+					if(result.get() == ButtonType.YES) {
+
+					} else {
+						Platform.exit();
+					}
 				}
 
 				if(GameBoard.get().isAIPlayer(newBoard.getCurrentPlayer().getAlliance())) {					
@@ -74,6 +82,7 @@ public class GameBoard extends BorderPane {
 				}
 			}
 		});
+		this.setTop(new DamaMenu());
 		this.setCenter(this.boardPane);
 	}
 
@@ -141,8 +150,6 @@ public class GameBoard extends BorderPane {
 		protected Move call() throws Exception {
 			final AlphaBetaPruning alphaBetaPruning = new AlphaBetaPruning(4);
 			final Move bestMove = alphaBetaPruning.execute(this.board);
-			// final MiniMax miniMax = new MiniMax(4);
-			// final Move bestMove = miniMax.execute(this.board);
 			return bestMove;
 		}
 
@@ -151,6 +158,18 @@ public class GameBoard extends BorderPane {
 			final Move bestMove = getValue();
 			GameBoard.get().getBoardPane().setBoard(this.board.getCurrentPlayer().makeMove(bestMove).getTransitionBoard());
 			GameBoard.get().getBoardPane().drawBoard(GameBoard.get().getBoardPane().getBoard());
+			if(GameBoard.get().getBoardPane().getBoard().getCurrentPlayer().isGameOver()) {
+				final Alert gameOverAlert = new Alert(AlertType.CONFIRMATION, "Would you like to start a New Game?", ButtonType.YES, ButtonType.NO);
+				gameOverAlert.setTitle("GAME OVER!");
+				gameOverAlert.setHeaderText(GameBoard.get().getBoardPane().getBoard().getCurrentPlayer().getOpponent() + " WINS!!!");
+				gameOverAlert.initStyle(StageStyle.UNDECORATED);
+				Optional<ButtonType> result = gameOverAlert.showAndWait();
+				if(result.get() == ButtonType.YES) {
+
+				} else {
+					Platform.exit();
+				}
+			}
 		}
 	}
 

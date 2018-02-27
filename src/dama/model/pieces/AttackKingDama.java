@@ -33,13 +33,14 @@ public class AttackKingDama extends Piece {
 			
 			int candidateDestinationCoordinate = this.piecePosition;
 
+			final List<Piece> addedPieces = new ArrayList<>();
+			addedPieces.addAll(this.attackedPieces);
+
 			while(BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
 				if(isFirstColumnExclusion(candidateDestinationCoordinate, candidateCoordinateOffset) ||
 				   isLastColumnExclusion(candidateDestinationCoordinate, candidateCoordinateOffset)) break;
 
 				candidateDestinationCoordinate += candidateCoordinateOffset;
-				final List<Piece> addedPieces = new ArrayList<>();
-				addedPieces.addAll(this.attackedPieces);
 
 				if(BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
 					final Tile candidateDestinationTile = board.getTile(candidateDestinationCoordinate);
@@ -70,7 +71,7 @@ public class AttackKingDama extends Piece {
 				}
 			}
 		}
-
+		
 		return ImmutableList.copyOf(legalMoves);
 
 	}
@@ -96,7 +97,7 @@ public class AttackKingDama extends Piece {
 
 	private boolean hasPreviousAttackMove(final List<Move> legalMoves, final int destinationCoordinate) {
 		for(final Move move : legalMoves) {
-			if(move.getDestinationCoordinate() == destinationCoordinate && move instanceof AttackMove) return true;
+			if(move.getDestinationCoordinate() == destinationCoordinate && move instanceof AdditionalAttackMove) return true;
 		}
 		return false;
 	}

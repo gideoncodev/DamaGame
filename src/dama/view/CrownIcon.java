@@ -7,15 +7,17 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 
 public class CrownIcon extends Polygon {
-	public CrownIcon() {
+	public CrownIcon(final int tileSize) {
+		final double tileCenter = tileSize / 2;
+		final double crownSize = tileCenter - 10.0;
 		this.getPoints().addAll(new Double[]{
-							    25.0, 27.0,
-							    35.0, 47.0,
-							    45.0, 27.0,
-							    55.0, 47.0,
-							    65.0, 27.0,
-							    55.0, 63.0,
-							    35.0, 63.0 });
+							    tileCenter - (crownSize / 2), tileCenter - (crownSize / 2),
+							    tileCenter - (crownSize / 4), tileCenter,
+							    tileCenter, tileCenter - (crownSize / 2),
+							    tileCenter + (crownSize / 4), tileCenter,
+							    tileCenter + (crownSize / 2), tileCenter - (crownSize / 2),
+							    tileCenter + (crownSize / 4), tileCenter + (crownSize / 2),
+							    tileCenter - (crownSize / 4), tileCenter + (crownSize / 2) });
 		this.setFill(Color.valueOf("#FFD700"));
 	}
 }

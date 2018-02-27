@@ -23,7 +23,6 @@ public class KingDama extends Piece {
 	@Override
 	public Collection<Move> calculateLegalMoves(final Board board) {
 		final List<Move> legalMoves = new ArrayList<>();
-
 		for(final int candidateCoordinateOffset : CANDIDATE_MOVE_COORDINATES) {
 
 			final List<Piece> attackedPieces = new ArrayList<>();
@@ -90,8 +89,12 @@ public class KingDama extends Piece {
 						legalAttackMoves.clear();
 						for(final Move move : addLegalAttackMoves) {
 							legalMoves.add(new AttackMove(board, this, move.getDestinationCoordinate(), move.getAttackedPieces()));
-							int[] moveCoordinates = this.getMoveCoordinates(move.getDestinationCoordinate() - move.getCurrentCoordinate());
-							AttackKingDama attackKingDama = new AttackKingDama(move.getDestinationCoordinate(), this.pieceAlliance, move.getAttackedPieces(), moveCoordinates);
+							int[] moveCoordinates = this.getMoveCoordinates((move.getDestinationCoordinate() - move.getCurrentCoordinate()) / 2);
+							AttackKingDama attackKingDama = new AttackKingDama(move.getDestinationCoordinate(),
+																			   this.pieceAlliance,
+																			   move.getAttackedPieces(),
+																			   moveCoordinates);
+							
 							legalAttackMoves.addAll(attackKingDama.calculateLegalMoves(move.execute()));
 						}
 					}

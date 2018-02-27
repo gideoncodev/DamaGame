@@ -97,4 +97,8 @@ public class AlphaBetaPruning implements MoveStrategy {
 	private static boolean isEndGameScenario(final Board board) {
 		return board.getCurrentPlayer().isGameOver();
 	}
+
+	private static boolean hasAttackMoves(final Board board) {
+		return board.getCurrentPlayer().hasAttackMoves();
+	}
 }

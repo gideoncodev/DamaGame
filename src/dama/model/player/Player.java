@@ -28,14 +28,6 @@ public abstract class Player {
 		return this.legalMoves;
 	}
 
-	private static Collection<Move> calculateOpponentMoves(final Collection<Move> moves) {
-		final List<Move> attackMoves = new ArrayList<>();
-		for(final Move move : moves) {
-			attackMoves.add(move);
-		}
-		return ImmutableList.copyOf(attackMoves);
-	}
-
 	public boolean isMoveLegal(final Move move) {
 		return this.legalMoves.contains(move);
 	}
@@ -44,7 +36,12 @@ public abstract class Player {
 		return this.isGameOver;
 	}
 
-	public boolean hasMoves() {
+	public boolean hasAttackMoves() {
+		for(final Move move : this.legalMoves) {
+			if(move.isAttack()) {
+				return true;
+			}
+		}
 		return false;
 	}
 

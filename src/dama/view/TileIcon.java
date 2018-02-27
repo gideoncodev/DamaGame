@@ -10,9 +10,12 @@ import dama.model.pieces.KingDama;
 import dama.controller.board.TileEventHandler;
 import dama.view.GameBoard.BoardPane;
 
+import javafx.stage.Screen;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.Cursor;
+import javafx.geometry.Rectangle2D;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.ArrayList;
@@ -25,7 +28,8 @@ public class TileIcon extends Pane {
 	private Collection<Move> selectedPieceLegalMoves;
 	private boolean isTileSelected;
 
-	private final static int TILE_SIZE = 90;
+	private final static Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+	private final static int TILE_SIZE = (int) (primaryScreenBounds.getHeight() - 100) / 8;
 
 	public TileIcon(final BoardPane boardPane,
 					final int tileId) {
@@ -51,14 +55,15 @@ public class TileIcon extends Pane {
 
 	private void setTilePiece(final Board board) {
 		if(board.getTile(this.tileId).isTileOccupied()) {
-			if(board.getCurrentPlayer().getAlliance() == board.getTile(this.tileId).getPiece().getPieceAlliance()) this.setCursor(Cursor.HAND);
+			if(board.getCurrentPlayer().getAlliance() == board.getTile(this.tileId).getPiece().getPieceAlliance() &&
+			   this.isTileHasMoves(board)) this.setCursor(Cursor.HAND);
 			if(board.getTile(this.tileId).getPiece().getPieceType().isKingDama()) {
-				PieceIcon pieceIcon = new PieceIcon(board.getTile(this.tileId).getPiece().getPieceAlliance(),
+				PieceIcon pieceIcon = new PieceIcon(TILE_SIZE, board.getTile(this.tileId).getPiece().getPieceAlliance(),
 													this.isTileHasMoves(board) && !this.isTileSelected);
-				CrownIcon crownIcon = new CrownIcon();
+				CrownIcon crownIcon = new CrownIcon(TILE_SIZE);
 				this.getChildren().addAll(pieceIcon, crownIcon);
 			} else {
-				this.getChildren().add(new PieceIcon(board.getTile(this.tileId).getPiece().getPieceAlliance(),
+				this.getChildren().add(new PieceIcon(TILE_SIZE, board.getTile(this.tileId).getPiece().getPieceAlliance(),
 													 this.isTileHasMoves(board) && !this.isTileSelected));
 			}
 		}
@@ -69,7 +74,7 @@ public class TileIcon extends Pane {
 			if(move.getDestinationCoordinate() == this.tileId) {
 				this.selectedPieceLegalMoves.add(move);
 				this.setCursor(Cursor.HAND);
-				this.getChildren().add(new PieceHighlightIcon(this.boardPane.getSelectedPiece().getPieceAlliance()));
+				this.getChildren().add(new PieceHighlightIcon(TILE_SIZE, this.boardPane.getSelectedPiece().getPieceAlliance()));
 			}
 		}
 	}
