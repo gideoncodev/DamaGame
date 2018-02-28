@@ -7,9 +7,9 @@ import dama.model.player.Player;
 import dama.model.pieces.Piece;
 
 public final class StandardBoardEvaluator implements BoardEvaluator {
-	private static final int GAME_OVER_BONUS = 500;
+	private static final int GAME_OVER_BONUS = 1000;
 	private static final int DEPTH_BONUS = 100;
-	private static final int ATTACK_MULTIPLIER = 5;
+	private static final int ATTACK_MULTIPLIER = 50;
 
 	private final static StandardBoardEvaluator INSTANCE = new StandardBoardEvaluator();
 
@@ -21,18 +21,21 @@ public final class StandardBoardEvaluator implements BoardEvaluator {
 	}
 
 	@Override
-	public int evaluate(final Board board,
+	public int evaluate(final Move move,
+						final Board board,
 						final int depth) {
-		return this.scorePlayer(board.getPlayer(Alliance.WHITE), depth) - 
-			   this.scorePlayer(board.getPlayer(Alliance.BLACK), depth);
+		return this.scorePlayer(move, board.getPlayer(Alliance.WHITE), depth) - 
+			   this.scorePlayer(move, board.getPlayer(Alliance.BLACK), depth);
 	}
 
-	private int scorePlayer(final Player player,
+	private int scorePlayer(final Move move,
+							final Player player,
 							final int depth) {
 		return StandardBoardEvaluator.pieceValue(player) +
 			   StandardBoardEvaluator.mobility(player) +
 			   StandardBoardEvaluator.gameOver(player, depth) +
-			   StandardBoardEvaluator.attacks(player);
+			   StandardBoardEvaluator.attacks(player) +
+			   StandardBoardEvaluator.moveAttacks(move);
 	}
 
 	private static int pieceValue(final Player player) {
@@ -48,7 +51,21 @@ public final class StandardBoardEvaluator implements BoardEvaluator {
 		int attackScore = 0;
 		for(final Move move : player.getLegalMoves()) {
 			if(move.isAttack()) {
-				attackScore++;
+				attackScore += move.getMovedPiece().getPieceValue();
+				for(final Piece piece : move.getAttackedPieces()) {
+					attackScore += piece.getPieceValue();
+				}
+			}
+		}
+
+		return attackScore * ATTACK_MULTIPLIER;
+	}
+
+	private static int moveAttacks(final Move move) {
+		int attackScore = 0;
+		if(move.isAttack()) {
+			for(final Piece piece : move.getAttackedPieces()) {
+				attackScore += piece.getPieceValue();
 			}
 		}
 

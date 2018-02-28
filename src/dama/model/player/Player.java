@@ -21,7 +21,7 @@ public abstract class Player {
 		   final Collection<Move> playerMoves) {
 		this.board = board;
 		this.legalMoves = playerMoves;
-		this.isGameOver = this.getActivePieces().isEmpty() || this.getLegalMoves().isEmpty();
+		this.isGameOver = this.getActivePieces().isEmpty();
 	}
 
 	public Collection<Move> getLegalMoves() {

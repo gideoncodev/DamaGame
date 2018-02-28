@@ -48,6 +48,7 @@ import java.util.Optional;
 public class GameBoard extends BorderPane {
 
 	private final BoardPane boardPane;
+	private final MoveLog moveLog;
 	private final PlayerType whitePlayerType = PlayerType.HUMAN;
 	private final PlayerType blackPlayerType = PlayerType.COMPUTER;
 
@@ -63,16 +64,7 @@ public class GameBoard extends BorderPane {
 								final Board oldBoard,
 								final Board newBoard) {
 				if(GameBoard.get().getBoardProperty().getValue().getCurrentPlayer().isGameOver()) {
-					final Alert gameOverAlert = new Alert(AlertType.CONFIRMATION, "Would you like to start a New Game?", ButtonType.YES, ButtonType.NO);
-					gameOverAlert.setTitle("GAME OVER!");
-					gameOverAlert.setHeaderText(newBoard.getCurrentPlayer().getOpponent() + " WINS!!!");
-					gameOverAlert.initStyle(StageStyle.UNDECORATED);
-					Optional<ButtonType> result = gameOverAlert.showAndWait();
-					if(result.get() == ButtonType.YES) {
-
-					} else {
-						Platform.exit();
-					}
+					createGameOverAlert();
 				}
 
 				if(GameBoard.get().isAIPlayer(newBoard.getCurrentPlayer().getAlliance())) {					
@@ -82,6 +74,7 @@ public class GameBoard extends BorderPane {
 				}
 			}
 		});
+		this.moveLog = new MoveLog();
 		this.setTop(new DamaMenu());
 		this.setCenter(this.boardPane);
 	}
@@ -96,6 +89,16 @@ public class GameBoard extends BorderPane {
 
 	public ObjectProperty<Board> getBoardProperty() {
 		return this.boardProperty;
+	}
+
+	public MoveLog getMoveLog() {
+		return this.moveLog;
+	}
+
+	public void newGameBoard() {
+		GameBoard.get().getBoardPane().setBoard(Board.createStandardBoard());
+		GameBoard.get().getMoveLog().clear();
+		GameBoard.get().getBoardPane().drawBoard(GameBoard.get().getBoardPane().getBoard());
 	}
 
 	public boolean isAIPlayer(final Alliance alliance) {
@@ -159,17 +162,21 @@ public class GameBoard extends BorderPane {
 			GameBoard.get().getBoardPane().setBoard(this.board.getCurrentPlayer().makeMove(bestMove).getTransitionBoard());
 			GameBoard.get().getBoardPane().drawBoard(GameBoard.get().getBoardPane().getBoard());
 			if(GameBoard.get().getBoardPane().getBoard().getCurrentPlayer().isGameOver()) {
-				final Alert gameOverAlert = new Alert(AlertType.CONFIRMATION, "Would you like to start a New Game?", ButtonType.YES, ButtonType.NO);
-				gameOverAlert.setTitle("GAME OVER!");
-				gameOverAlert.setHeaderText(GameBoard.get().getBoardPane().getBoard().getCurrentPlayer().getOpponent() + " WINS!!!");
-				gameOverAlert.initStyle(StageStyle.UNDECORATED);
-				Optional<ButtonType> result = gameOverAlert.showAndWait();
-				if(result.get() == ButtonType.YES) {
-
-				} else {
-					Platform.exit();
-				}
+				createGameOverAlert();
 			}
+		}
+	}
+
+	private static void createGameOverAlert() {
+		final Alert gameOverAlert = new Alert(AlertType.CONFIRMATION, "Would you like to start a New Game?", ButtonType.YES, ButtonType.NO);
+		gameOverAlert.setTitle("GAME OVER!");
+		gameOverAlert.setHeaderText(GameBoard.get().getBoardPane().getBoard().getCurrentPlayer().getOpponent() + " WINS!!!");
+		gameOverAlert.initStyle(StageStyle.UNDECORATED);
+		Optional<ButtonType> result = gameOverAlert.showAndWait();
+		if(result.get() == ButtonType.YES) {
+			GameBoard.get().newGameBoard();
+		} else {
+			Platform.exit();
 		}
 	}
 

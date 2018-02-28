@@ -118,7 +118,7 @@ public abstract class Move {
 
 		@Override
 		public String toString() {
-			return this.movedPiece.getPieceType().toString() + BoardUtils.getCoordinateAtPosition(this.destinationCoordinate);
+			return "Normal Move";
 		}
 
 	}
