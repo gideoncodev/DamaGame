@@ -1,10 +1,9 @@
 package dama.controller.menu;
 
-import dama.view.GameBoard;
+import dama.view.board.GameBoard;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.scene.input.MouseButton;
 import javafx.event.EventHandler;
 
 public class FileMenuHandler {

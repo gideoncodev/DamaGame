@@ -70,13 +70,13 @@ public abstract class Piece {
 
 	public enum PieceType {
 
-		DAMA(10, "D") {
+		DAMA(50, "D") {
 			@Override
 			public boolean isKingDama() {
 				return false;
 			}
 		},
-		KINGDAMA(50, "KD") {
+		KINGDAMA(1000, "KD") {
 			@Override
 			public boolean isKingDama() {
 				return true;

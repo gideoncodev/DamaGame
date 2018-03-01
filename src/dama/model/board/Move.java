@@ -118,7 +118,7 @@ public abstract class Move {
 
 		@Override
 		public String toString() {
-			return "Normal Move";
+			return "\nNormal Move: \nCurrent Coordinate: " + this.getCurrentCoordinate() + "\nDestination Coordinate: " + this.destinationCoordinate;
 		}
 
 	}
@@ -158,7 +158,7 @@ public abstract class Move {
 
 		@Override
 		public String toString() {
-			return "Attack Move";
+			return "\nAttack Move: \nCurrent Coordinate: " + this.getCurrentCoordinate() + "\nDestination Coordinate: " + this.destinationCoordinate;
 		}
 
 		@Override
@@ -230,7 +230,7 @@ public abstract class Move {
 
 		@Override
 		public String toString() {
-			return "Additional Attack Move";
+			return "\nAdditional Attack Move: \nCurrent Coordinate: " + this.getCurrentCoordinate() + "\nDestination Coordinate: " + this.destinationCoordinate;
 		}
 
 		@Override

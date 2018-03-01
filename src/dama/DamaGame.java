@@ -1,7 +1,7 @@
 package dama;
 
 import dama.model.board.Board;
-import dama.view.GameBoard;
+import dama.view.board.GameBoard;
 
 import javafx.application.Application;
 import javafx.stage.Stage;

@@ -1,7 +1,7 @@
 package dama.controller.board;
 
-import dama.view.TileIcon;
-import dama.view.GameBoard;
+import dama.view.board.TileIcon;
+import dama.view.board.GameBoard;
 import dama.model.board.Move;
 import dama.model.board.MoveTransition;
 import static dama.model.board.Move.MoveFactory;
@@ -69,6 +69,7 @@ public class TileEventHandler implements EventHandler<MouseEvent> {
 					final MoveTransition moveTransition = GameBoard.get().getBoardPane().getBoard().getCurrentPlayer().makeMove(move);
 					if(moveTransition.getMoveStatus().isDone()) {
 						GameBoard.get().getMoveLog().addUndoMoves(move, GameBoard.get().getBoardPane().getBoard());
+						GameBoard.get().getMoveLog().clearRedoMoves();
 						GameBoard.get().getBoardPane().setBoard(moveTransition.getTransitionBoard());
 					}
 					GameBoard.get().getBoardPane().setSourceTile(null);
