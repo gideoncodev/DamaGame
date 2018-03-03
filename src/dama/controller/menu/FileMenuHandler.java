@@ -10,8 +10,6 @@ public class FileMenuHandler {
 	public static class NewHandler implements EventHandler<ActionEvent> {
 		@Override
 		public void handle(final ActionEvent e) {
-			System.out.println(e.getEventType().getSuperType());
-			System.out.println("New Game");
 			GameBoard.get().newGameBoard();
 		}
 	}
@@ -19,7 +17,6 @@ public class FileMenuHandler {
 	public static class ExitHandler implements EventHandler<ActionEvent> {
 		@Override
 		public void handle(final ActionEvent e) {
-			System.out.println("Exit");
 			Platform.exit();
 		}
 	}

@@ -62,7 +62,9 @@ public class MoveLog {
 
 	public void addRedoMoves(final Move move, final Board board) {
 		if(move.isAttack()) {
-			this.attackedPieces.removeAll(move.getAttackedPieces());
+			for(final Piece piece : move.getAttackedPieces()) {
+				this.attackedPieces.remove(piece);
+			}
 		}
 		this.redoListMoves.add(move);
 		this.redoMapMoves.put(move, board);
@@ -74,6 +76,7 @@ public class MoveLog {
 	}
 
 	public void clear() {
+		this.attackedPieces.clear();
 		this.undoMapMoves.clear();
 		this.redoMapMoves.clear();
 		this.undoListMoves.clear();

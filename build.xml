@@ -3,36 +3,53 @@
 
 	<property name="build.dir" value="build" />
 	<property name="lib.dir" value="lib" />
+	<property name="resources.dir" value="image" />
 	<property name="dest.dir" value="${build.dir}/classes" />
+	<property name="jar.dir" value="jar" />
 	<property name="src.dir" value="src" />
 
 	<property name="main.class" value="dama.DamaGame" />
 
-
-	<path id="guava-classpath">
+	<path id="main-classpath">
+		<!-- <fileset dir="${build.dir}">
+			<include name="**/*.class" />
+		</fileset> -->
 		<fileset dir="${lib.dir}">
 			<include name="*.jar" />
 		</fileset>
-	</path>
-
-	<path id="main-classpath">
-		<fileset dir="${build.dir}">
-			<include name="**/*.class" />
-		</fileset>
+		<pathelement location="${dest.dir}" />
 	</path>
 
 	<target name="clean">
 		<delete dir="${build.dir}" />
+		<delete dir="${jar.dir}" />
 	</target>
 
 	<target name="compile">
 		<mkdir dir="${dest.dir}" />
-		<javac srcdir="${src.dir}" destdir="${dest.dir}" includeantruntime="true" classpathref="guava-classpath"/>
+		<javac srcdir="${src.dir}" destdir="${dest.dir}" includeantruntime="true" classpathref="main-classpath"/>
+		<mkdir dir="${dest.dir}/dama/view/image" />
+		<copy todir="${dest.dir}/dama/view/image" overwrite="true">
+			<fileset dir="${resources.dir}"/>
+		</copy>
 	</target>
 
-	<target name="run" depends="compile">
-		<java classname="${main.class}" fork="true" classpathref="guava-classpath">
-			<classpath path="${dest.dir}" />
+	<target name="jar" depends="compile" description="Build JAR file">
+		<mkdir dir="${jar.dir}" />
+		<jar destfile="${jar.dir}/DamaGame.jar" basedir="${dest.dir}">
+			<fileset dir="${dest.dir}" />
+            <zipgroupfileset dir="${lib.dir}" includes="*.jar" />
+            <manifest>
+                <attribute name="Main-Class" value="${main.class}" />
+                <attribute name="Class-Path" value="${dest.dir}" />
+            </manifest>
+		</jar>
+	</target>
+
+
+	<target name="run" depends="jar">
+		<java classname="${main.class}" fork="true">
+			<classpath path="${jar.dir}/DamaGame.jar" />
 		</java>
 	</target>
 

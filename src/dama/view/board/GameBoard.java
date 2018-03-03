@@ -48,16 +48,22 @@ import java.util.Optional;
 public class GameBoard extends BorderPane {
 
 	private final BoardPane boardPane;
+	private final TakenPiecesPane whiteTakenPiecesPane;
+	private final TakenPiecesPane blackTakenPiecesPane;
 	private final MoveLog moveLog;
 	private final PlayerType whitePlayerType = PlayerType.HUMAN;
 	private final PlayerType blackPlayerType = PlayerType.COMPUTER;
 
 	private ObjectProperty<Board> boardProperty = new SimpleObjectProperty<>();
 
-	private static final GameBoard INSTANCE = new GameBoard();
+	private final static GameBoard INSTANCE = new GameBoard();
 
 	private GameBoard() {
 		this.boardPane = new BoardPane(Board.createStandardBoard());
+		this.whiteTakenPiecesPane = new TakenPiecesPane(Alliance.WHITE);
+		this.blackTakenPiecesPane = new TakenPiecesPane(Alliance.BLACK);
+		this.whiteTakenPiecesPane.getPlayerProfile().update(this.boardPane.getBoard());
+		this.blackTakenPiecesPane.getPlayerProfile().update(this.boardPane.getBoard());
 		this.boardProperty.addListener(new ChangeListener<Board>() {
 			@Override
 			public void changed(final ObservableValue ov,
@@ -77,6 +83,8 @@ public class GameBoard extends BorderPane {
 		});
 		this.moveLog = new MoveLog();
 		this.setTop(new DamaMenu());
+		this.setLeft(this.blackTakenPiecesPane);
+		this.setRight(this.whiteTakenPiecesPane);
 		this.setCenter(this.boardPane);
 	}
 
@@ -86,6 +94,14 @@ public class GameBoard extends BorderPane {
 
 	public BoardPane getBoardPane() {
 		return this.boardPane;
+	}
+
+	public TakenPiecesPane getWhiteTakenPiecesPane() {
+		return this.whiteTakenPiecesPane;
+	}
+
+	public TakenPiecesPane getBlackTakenPiecesPane() {
+		return this.blackTakenPiecesPane;
 	}
 
 	public ObjectProperty<Board> getBoardProperty() {
@@ -99,6 +115,10 @@ public class GameBoard extends BorderPane {
 	public void newGameBoard() {
 		GameBoard.get().getBoardPane().setBoard(Board.createStandardBoard());
 		GameBoard.get().getMoveLog().clear();
+		GameBoard.get().getWhiteTakenPiecesPane().getPlayerProfile().update(GameBoard.get().getBoardPane().getBoard());
+		GameBoard.get().getBlackTakenPiecesPane().getPlayerProfile().update(GameBoard.get().getBoardPane().getBoard());
+		GameBoard.get().getWhiteTakenPiecesPane().getTakenPieces().draw(GameBoard.get().getMoveLog().getAttackedPieces());
+		GameBoard.get().getBlackTakenPiecesPane().getTakenPieces().draw(GameBoard.get().getMoveLog().getAttackedPieces());
 		GameBoard.get().getBoardPane().drawBoard(GameBoard.get().getBoardPane().getBoard());
 	}
 
@@ -183,6 +203,10 @@ public class GameBoard extends BorderPane {
 			Platform.runLater(new Runnable() {
 				@Override
 				public void run() {
+					GameBoard.get().getWhiteTakenPiecesPane().getPlayerProfile().update(GameBoard.get().getBoardPane().getBoard());
+					GameBoard.get().getBlackTakenPiecesPane().getPlayerProfile().update(GameBoard.get().getBoardPane().getBoard());
+					GameBoard.get().getWhiteTakenPiecesPane().getTakenPieces().draw(GameBoard.get().getMoveLog().getAttackedPieces());
+					GameBoard.get().getBlackTakenPiecesPane().getTakenPieces().draw(GameBoard.get().getMoveLog().getAttackedPieces());
 					GameBoard.get().getBoardPane().drawBoard(GameBoard.get().getBoardPane().getBoard());
 					GameBoard.get().getBoardProperty().setValue(GameBoard.get().getBoardPane().getBoard());
 				}

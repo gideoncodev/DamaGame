@@ -81,6 +81,10 @@ public class TileEventHandler implements EventHandler<MouseEvent> {
 			Platform.runLater(new Runnable() {
 				@Override
 				public void run() {
+					GameBoard.get().getWhiteTakenPiecesPane().getPlayerProfile().update(GameBoard.get().getBoardPane().getBoard());
+					GameBoard.get().getBlackTakenPiecesPane().getPlayerProfile().update(GameBoard.get().getBoardPane().getBoard());
+					GameBoard.get().getWhiteTakenPiecesPane().getTakenPieces().draw(GameBoard.get().getMoveLog().getAttackedPieces());
+					GameBoard.get().getBlackTakenPiecesPane().getTakenPieces().draw(GameBoard.get().getMoveLog().getAttackedPieces());
 					GameBoard.get().getBoardPane().drawBoard(GameBoard.get().getBoardPane().getBoard());
 					GameBoard.get().getBoardProperty().setValue(GameBoard.get().getBoardPane().getBoard());
 				}

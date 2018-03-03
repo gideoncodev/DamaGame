@@ -13,7 +13,7 @@ public class PieceIcon extends Circle {
 		this.relocate(10, 10);
 		this.setFill(this.pieceAlliance.isBlack() ? Color.valueOf("#1E1E1E") : Color.valueOf("#FFF9F4"));
 		if(pieceHasLegalMoves) {
-			this.setStroke(Color.valueOf("#9F0000"));
+			this.setStroke(Color.valueOf("#EE4035"));
 			this.setStrokeWidth(2);
 		}
 	}

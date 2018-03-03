@@ -50,7 +50,7 @@ public class TileIcon extends Pane {
 	private final void setTileColor(final Board board) {
 		final boolean light = ((this.tileId / BoardUtils.NUM_TILES_PER_ROW) + (this.tileId % BoardUtils.NUM_TILES_PER_ROW)) % 2 == 0;
 		if(this.isTileSelected && this.isTileHasMoves(board)) {
-			this.setStyle("-fx-background-color: #9F0000;");
+			this.setStyle("-fx-background-color: #EE4035;");
 		} else {
 			this.setStyle(light ? "-fx-background-color: #FEB;" : "-fx-background-color: #582;");
 		}
