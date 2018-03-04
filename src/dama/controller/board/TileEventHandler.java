@@ -72,6 +72,7 @@ public class TileEventHandler implements EventHandler<MouseEvent> {
 						GameBoard.get().getMoveLog().clearRedoMoves();
 						GameBoard.get().getBoardPane().setBoard(moveTransition.getTransitionBoard());
 					}
+					GameBoard.get().getBoardPane().updateComputerMove(null);
 					GameBoard.get().getBoardPane().setSourceTile(null);
 					GameBoard.get().getBoardPane().setDestinationTile(null);
 					GameBoard.get().getBoardPane().setSelectedPiece(null);

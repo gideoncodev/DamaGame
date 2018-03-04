@@ -47,6 +47,30 @@ public class TileIcon extends Pane {
 		this.setOnMouseClicked(new TileEventHandler(this));
 	}
 
+	public void drawTile(final Board board) {
+		this.isTileSelected = board.getTile(this.tileId).isTileOccupied() &&
+						      board.getCurrentPlayer().getAlliance() == board.getTile(this.tileId).getPiece().getPieceAlliance() &&
+						      this.boardPane.getSelectedPiece() != null &&
+					   	      this.boardPane.getSelectedPiece().getPiecePosition() == this.tileId;
+		this.setTileColor(board);
+		this.setTileEmpty();
+		this.setTilePiece(board);
+		this.setTileAIMoves();
+		this.highlightLegalMoves(board);
+	}
+
+	public int getTileId() {
+		return this.tileId;
+	}
+
+	public BoardPane getBoardPane() {
+		return this.boardPane;
+	}
+
+	public Collection<Move> getSelectedPieceLegalMoves() {
+		return this.selectedPieceLegalMoves;
+	}
+
 	private final void setTileColor(final Board board) {
 		final boolean light = ((this.tileId / BoardUtils.NUM_TILES_PER_ROW) + (this.tileId % BoardUtils.NUM_TILES_PER_ROW)) % 2 == 0;
 		if(this.isTileSelected && this.isTileHasMoves(board)) {
@@ -82,6 +106,16 @@ public class TileIcon extends Pane {
 		}
 	}
 
+	private void setTileAIMoves() {
+		if(this.boardPane.getComputerMove() != null) {
+			if(this.tileId == this.boardPane.getComputerMove().getCurrentCoordinate()) {
+				this.setStyle("-fx-background-color: #D45252;");
+			} else if(this.tileId == this.boardPane.getComputerMove().getDestinationCoordinate()) {
+				this.setStyle("-fx-background-color: #D81616;");
+			}
+		}
+	}
+
 	private Collection<Move> pieceLegalMoves(final Board board) {
 		if(this.boardPane.getSelectedPiece() != null &&
 		   this.boardPane.getSelectedPiece().getPieceAlliance() == board.getCurrentPlayer().getAlliance()) {
@@ -105,27 +139,5 @@ public class TileIcon extends Pane {
 		this.setCursor(Cursor.DEFAULT);
 	}
 
-	public void drawTile(final Board board) {
-		this.isTileSelected = board.getTile(this.tileId).isTileOccupied() &&
-						      board.getCurrentPlayer().getAlliance() == board.getTile(this.tileId).getPiece().getPieceAlliance() &&
-						      this.boardPane.getSelectedPiece() != null &&
-					   	      this.boardPane.getSelectedPiece().getPiecePosition() == this.tileId;
-		this.setTileColor(board);
-		this.setTileEmpty();
-		this.setTilePiece(board);
-		this.highlightLegalMoves(board);
-	}
-
-	public int getTileId() {
-		return this.tileId;
-	}
-
-	public BoardPane getBoardPane() {
-		return this.boardPane;
-	}
-
-	public Collection<Move> getSelectedPieceLegalMoves() {
-		return this.selectedPieceLegalMoves;
-	}
 	
 }

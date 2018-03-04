@@ -11,9 +11,6 @@
 	<property name="main.class" value="dama.DamaGame" />
 
 	<path id="main-classpath">
-		<!-- <fileset dir="${build.dir}">
-			<include name="**/*.class" />
-		</fileset> -->
 		<fileset dir="${lib.dir}">
 			<include name="*.jar" />
 		</fileset>

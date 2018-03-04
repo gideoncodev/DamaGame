@@ -115,6 +115,10 @@ public class GameBoard extends BorderPane {
 	public void newGameBoard() {
 		GameBoard.get().getBoardPane().setBoard(Board.createStandardBoard());
 		GameBoard.get().getMoveLog().clear();
+		GameBoard.get().getBoardPane().updateComputerMove(null);
+		GameBoard.get().getBoardPane().setSourceTile(null);
+		GameBoard.get().getBoardPane().setDestinationTile(null);
+		GameBoard.get().getBoardPane().setSelectedPiece(null);
 		GameBoard.get().getWhiteTakenPiecesPane().getPlayerProfile().update(GameBoard.get().getBoardPane().getBoard());
 		GameBoard.get().getBlackTakenPiecesPane().getPlayerProfile().update(GameBoard.get().getBoardPane().getBoard());
 		GameBoard.get().getWhiteTakenPiecesPane().getTakenPieces().draw(GameBoard.get().getMoveLog().getAttackedPieces());
@@ -198,6 +202,7 @@ public class GameBoard extends BorderPane {
 		protected void succeeded() {
 			final Move bestMove = getValue();
 			GameBoard.get().getMoveLog().addUndoMoves(bestMove, GameBoard.get().getBoardPane().getBoard());
+			GameBoard.get().getBoardPane().updateComputerMove(bestMove);
 			GameBoard.get().getBoardPane().setBoard(this.board.getCurrentPlayer().makeMove(bestMove).getTransitionBoard());
 
 			Platform.runLater(new Runnable() {
@@ -222,6 +227,7 @@ public class GameBoard extends BorderPane {
 		private Tile sourceTile;
 		private Tile destinationTile;
 		private Piece selectedPiece;
+		private Move computerMove;
 
 		BoardPane(final Board board) {
 			this.board = board;
@@ -255,6 +261,14 @@ public class GameBoard extends BorderPane {
 
 		public Piece getSelectedPiece() {
 			return this.selectedPiece;
+		}
+
+		public Move getComputerMove() {
+			return this.computerMove;
+		}
+
+		public void updateComputerMove(final Move move) {
+			this.computerMove = move;
 		}
 
 		public void setBoard(final Board board) {

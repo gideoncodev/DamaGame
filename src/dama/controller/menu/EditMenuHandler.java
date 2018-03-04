@@ -19,6 +19,7 @@ public class EditMenuHandler {
 						final Board board = GameBoard.get().getMoveLog().removeRedoMapMoves(move);
 						GameBoard.get().getMoveLog().addUndoMoves(move, GameBoard.get().getBoardPane().getBoard());
 						GameBoard.get().getBoardPane().setBoard(board);
+						if(i == 1) GameBoard.get().getBoardPane().updateComputerMove(move);
 					}
 				} else {
 					final Move move = GameBoard.get().getMoveLog().removeRedoListMoves(GameBoard.get().getMoveLog().getRedoMoves().size() - 1);
@@ -57,6 +58,7 @@ public class EditMenuHandler {
 					GameBoard.get().getMoveLog().addRedoMoves(move, GameBoard.get().getBoardPane().getBoard());
 					GameBoard.get().getBoardPane().setBoard(board);
 				}
+				GameBoard.get().getBoardPane().updateComputerMove(null);
 				Platform.runLater(new Runnable() {
 					@Override
 					public void run() {
