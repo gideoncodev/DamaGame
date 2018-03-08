@@ -9,7 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 
 public class EditMenuHandler {
-	public static class RedoMenu implements EventHandler<ActionEvent> {
+	public static class RedoHandler implements EventHandler<ActionEvent> {
 		@Override
 		public void handle(final ActionEvent e) {
 			if(!GameBoard.get().getMoveLog().getRedoMoves().isEmpty()) {
@@ -41,7 +41,7 @@ public class EditMenuHandler {
 		}
 	}
 
-	public static class UndoMenu implements EventHandler<ActionEvent> {
+	public static class UndoHandler implements EventHandler<ActionEvent> {
 		@Override
 		public void handle(final ActionEvent e) {
 			if(!GameBoard.get().getMoveLog().getUndoMoves().isEmpty()) {

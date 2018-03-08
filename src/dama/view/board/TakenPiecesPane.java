@@ -4,7 +4,9 @@ import dama.model.Alliance;
 import dama.model.pieces.Piece;
 import dama.model.board.Board;
 
+import javafx.application.Platform;
 import javafx.stage.Screen;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -34,7 +36,7 @@ public class TakenPiecesPane extends BorderPane {
 		this.tileSize = TAKEN_PIECES_TILE_SIZE;
 		this.takenPieces = new TakenPieces(this.tileSize, this.alliance);
 		this.playerProfile = new PlayerProfile(this.tileSize, this.alliance);
-		this.setStyle("-fx-background-color: #808080;");
+		this.setStyle("-fx-background-color: #373739;");
 		this.setupPane();
 	}
 
@@ -106,6 +108,7 @@ public class TakenPiecesPane extends BorderPane {
 		private final Circle profile;
 		private final int tileSize;
 		private final Alliance alliance;
+		private final Label playerLabel;
 
 		public PlayerProfile(final int tileSize, final Alliance alliance) {
 			this.tileSize = tileSize;
@@ -114,7 +117,17 @@ public class TakenPiecesPane extends BorderPane {
 			this.profile.setFill(new ImagePattern(playerImage));
 			this.profile.setRadius(this.tileSize - 10);
 			this.profile.relocate(10, 10);
-			this.getChildren().add(this.profile);
+			this.playerLabel = new Label(this.alliance.isWhite() ? "WHITE" : "BLACK");
+			this.playerLabel.setTextFill(Color.TRANSPARENT);
+			this.playerLabel.setStyle("-fx-font-size: 30; -fx-font-family: Century Gothic; -fx-font-weight: bolder;");
+			this.getChildren().addAll(this.profile, this.playerLabel);
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+					playerLabel.setTextFill(Color.valueOf("#999"));
+					playerLabel.relocate(tileSize - ((int)(tileSize / 2) - 3), tileSize - 20);
+				}
+			});
 		}
 
 		public void update(final Board board) {

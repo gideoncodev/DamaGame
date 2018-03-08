@@ -27,12 +27,14 @@ import javafx.scene.Cursor;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Label;
@@ -82,10 +84,7 @@ public class GameBoard extends BorderPane {
 			}
 		});
 		this.moveLog = new MoveLog();
-		this.setTop(new DamaMenu());
-		this.setLeft(this.blackTakenPiecesPane);
-		this.setRight(this.whiteTakenPiecesPane);
-		this.setCenter(this.boardPane);
+		this.setCenter(InitialGame.get());
 	}
 
 	public static GameBoard get() {
@@ -110,6 +109,13 @@ public class GameBoard extends BorderPane {
 
 	public MoveLog getMoveLog() {
 		return this.moveLog;
+	}
+	public void updateBoard() {
+		this.setTop(new DamaMenu());
+		this.setLeft(this.blackTakenPiecesPane);
+		this.setRight(this.whiteTakenPiecesPane);
+		this.setCenter(this.boardPane);
+		this.getScene().getWindow().sizeToScene();
 	}
 
 	public void newGameBoard() {
@@ -286,5 +292,73 @@ public class GameBoard extends BorderPane {
 		public void setSelectedPiece(final Piece selectedPiece) {
 			this.selectedPiece = selectedPiece;
 		}
+	}
+
+	private static class InitialGame extends Pane {
+
+		private final static Rectangle2D SCREEN_BOUNDS = Screen.getPrimary().getVisualBounds();
+		private final static int TILE_SIZE = (int) (SCREEN_BOUNDS.getHeight() - 100) / 8;
+		private final static int INIT_WIDTH = TILE_SIZE * 12;
+		private final static int INIT_HEIGHT = TILE_SIZE * 8;
+
+		private final static InitialGame INSTANCE = new InitialGame();
+
+		private InitialGame() {
+			this.setPrefSize(INIT_WIDTH, INIT_HEIGHT);
+			this.setStyle("-fx-background-color: #373739;");
+			this.addLabels();
+		}
+
+		public static InitialGame get() {
+			return INSTANCE;
+		}
+
+		private void addLabels() {
+			final Label damaLabel = new Label("DAMA");
+			damaLabel.setTextFill(Color.valueOf("#373739"));
+			damaLabel.setStyle("-fx-font-size: 100; -fx-font-family: Georgia; -fx-font-weight: bolder;");
+			final Label addedLabel = new Label("Player VS Computer");
+			addedLabel.setTextFill(Color.valueOf("#373739"));
+			addedLabel.setStyle("-fx-font-size: 50; -fx-font-family: Georgia; -fx-font-weight: bold; -fx-font-style: italic;");
+			final Button playButton = new Button("Play");
+			playButton.setTextFill(Color.valueOf("#373739"));
+			playButton.setCursor(Cursor.HAND);
+			playButton.setOnMouseEntered(e -> {
+				playButton.setTextFill(Color.valueOf("#72716B"));
+				playButton.setStyle("-fx-font-size: 40; -fx-font-family: Georgia; -fx-background-color: #C4F2F4; -fx-border-color: #C4F2F4; -fx-border-width: 5; -fx-border-radius: 50; -fx-background-radius: 50;");
+			});
+			playButton.setOnMouseExited(e -> {
+				playButton.setTextFill(Color.valueOf("#C4F2F4"));
+				playButton.setStyle("-fx-font-size: 40; -fx-font-family: Georgia; -fx-background-color: #373739; -fx-border-color: #C4F2F4; -fx-border-width: 5; -fx-border-radius: 50; -fx-background-radius: 50;");
+			});
+			playButton.setOnMouseClicked(e -> {
+				Platform.runLater(new Runnable() {
+					@Override
+					public void run() {
+						GameBoard.get().updateBoard();
+					}
+				});
+			});
+			this.getChildren().addAll(damaLabel, addedLabel, playButton);
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+					int damaLabelY = (INIT_HEIGHT / 2) - 200;
+					int damaLabelX = (INIT_WIDTH / 2) - ((int) damaLabel.getWidth() / 2);
+					damaLabel.setTextFill(Color.valueOf("#C8EC31"));
+					damaLabel.relocate(damaLabelX, damaLabelY);
+					int addedLabelY = (INIT_HEIGHT / 2) - 50;
+					int addedLabelX = (INIT_WIDTH / 2) - ((int) addedLabel.getWidth() / 2);
+					addedLabel.setTextFill(Color.valueOf("#EBE7DB"));
+					addedLabel.relocate(addedLabelX, addedLabelY);
+					int playButtonY = (INIT_HEIGHT / 2) + 50;
+					int playButtonX = (INIT_WIDTH / 2) - (int) (playButton.getWidth() * 1.5);
+					playButton.setTextFill(Color.valueOf("#C4F2F4"));
+					playButton.setStyle("-fx-font-size: 40; -fx-font-family: Georgia; -fx-background-color: #373739; -fx-border-color: #C4F2F4; -fx-border-width: 5; -fx-border-radius: 50; -fx-background-radius: 50;");
+					playButton.relocate(playButtonX, playButtonY);
+				}
+			});
+		}
+
 	}
 }
