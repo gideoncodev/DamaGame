@@ -141,16 +141,12 @@ public class GameBoard extends BorderPane {
 	}
 
 	private static void createGameOverAlert() {
-		final Alert gameOverAlert = new Alert(AlertType.CONFIRMATION, "Would you like to start a New Game?", ButtonType.YES, ButtonType.NO);
-		gameOverAlert.setTitle("GAME OVER!");
-		gameOverAlert.setHeaderText(GameBoard.get().getBoardPane().getBoard().getCurrentPlayer().getOpponent() + " WINS!!!");
-		gameOverAlert.initStyle(StageStyle.UNDECORATED);
-		Optional<ButtonType> result = gameOverAlert.showAndWait();
-		if(result.get() == ButtonType.YES) {
-			GameBoard.get().newGameBoard();
-		} else {
-			Platform.exit();
-		}
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				new GameOverStage();
+			}
+		});
 	}
 
 	protected enum PlayerType {
