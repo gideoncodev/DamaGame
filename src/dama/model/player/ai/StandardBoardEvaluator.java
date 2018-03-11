@@ -9,7 +9,8 @@ import dama.model.pieces.Piece;
 public final class StandardBoardEvaluator implements BoardEvaluator {
 	private static final int GAME_OVER_BONUS = 10000;
 	private static final int DEPTH_BONUS = 100;
-	private static final int ATTACK_MULTIPLIER = 5000;
+	private static final int ATTACK_MULTIPLIER = 100000;
+	private static final int DRAW_BONUS = 100;
 
 	private final static StandardBoardEvaluator INSTANCE = new StandardBoardEvaluator();
 
@@ -34,7 +35,8 @@ public final class StandardBoardEvaluator implements BoardEvaluator {
 		return StandardBoardEvaluator.pieceValue(player) +
 			   StandardBoardEvaluator.mobility(player) +
 			   StandardBoardEvaluator.gameOver(player, depth) +
-			   StandardBoardEvaluator.moveAttacks(move);
+			   StandardBoardEvaluator.moveAttacks(move) + 
+			   StandardBoardEvaluator.drawGame(player, depth);
 	}
 
 	private static int pieceValue(final Player player) {
@@ -76,8 +78,13 @@ public final class StandardBoardEvaluator implements BoardEvaluator {
 	}
 
 	private static int gameOver(final Player player,
-						 final int depth) {
+						 		final int depth) {
 		return player.getOpponent().isGameOver() ? GAME_OVER_BONUS * StandardBoardEvaluator.depthBonus(depth) : 0;
+	}
+
+	private static int drawGame(final Player player,
+								final int depth) {
+		return player.isDraw() ? DRAW_BONUS * StandardBoardEvaluator.depthBonus(depth) : 0;
 	}
 
 	private static int depthBonus(final int depth) {

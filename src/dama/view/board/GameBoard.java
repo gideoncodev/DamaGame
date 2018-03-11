@@ -203,6 +203,8 @@ public class GameBoard extends BorderPane {
 		@Override
 		protected void succeeded() {
 			final Move bestMove = getValue();
+			System.out.println(bestMove);
+			System.out.println(GameBoard.get().getBoardPane().getBoard());
 			GameBoard.get().getMoveLog().addUndoMoves(bestMove, GameBoard.get().getBoardPane().getBoard());
 			GameBoard.get().getBoardPane().updateComputerMove(bestMove);
 			GameBoard.get().getBoardPane().setBoard(this.board.getCurrentPlayer().makeMove(bestMove).getTransitionBoard());
@@ -215,7 +217,10 @@ public class GameBoard extends BorderPane {
 					GameBoard.get().getWhiteTakenPiecesPane().getTakenPieces().draw(GameBoard.get().getMoveLog().getAttackedPieces());
 					GameBoard.get().getBlackTakenPiecesPane().getTakenPieces().draw(GameBoard.get().getMoveLog().getAttackedPieces());
 					GameBoard.get().getBoardPane().drawBoard(GameBoard.get().getBoardPane().getBoard());
-					GameBoard.get().getBoardProperty().setValue(GameBoard.get().getBoardPane().getBoard());
+					if(GameBoard.get().getBoardProperty().getValue().getCurrentPlayer().isGameOver() || 
+				   	   GameBoard.get().getBoardPane().getBoard().getCurrentPlayer().getLegalMoves().isEmpty()) {
+						createGameOverAlert();
+					}
 				}
 			});
 		}

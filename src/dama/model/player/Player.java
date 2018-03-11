@@ -16,12 +16,14 @@ public abstract class Player {
 	protected final Board board;
 	protected final Collection<Move> legalMoves;
 	private final boolean isGameOver;
+	private final boolean isDraw;
 
 	Player(final Board board,
 		   final Collection<Move> playerMoves) {
 		this.board = board;
 		this.legalMoves = playerMoves;
 		this.isGameOver = this.getActivePieces().isEmpty();
+		this.isDraw = this.getActivePieces().isEmpty();
 	}
 
 	public Collection<Move> getLegalMoves() {
@@ -34,6 +36,10 @@ public abstract class Player {
 
 	public boolean isGameOver() {
 		return this.isGameOver;
+	}
+
+	public boolean isDraw() {
+		return this.isDraw;
 	}
 
 	public boolean hasAttackMoves() {

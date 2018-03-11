@@ -49,18 +49,22 @@ public class AlphaBetaPruning implements MoveStrategy {
 				currentValue = board.getCurrentPlayer().getAlliance().isWhite() ? 
 							   this.min(move, moveTransition.getTransitionBoard(), this.searchDepth - 1, highestSeenValue, lowestSeenValue) :
 							   this.max(move, moveTransition.getTransitionBoard(), this.searchDepth - 1, highestSeenValue, lowestSeenValue);
-
+				System.out.println(currentValue);
 				if(board.getCurrentPlayer().getAlliance().isWhite() && currentValue > highestSeenValue) {
 				   	highestSeenValue = currentValue;
 				   	bestMove = move;
-				   	if(moveTransition.getTransitionBoard().getPlayer(Alliance.BLACK).isGameOver()) break;
+				   	if(moveTransition.getTransitionBoard().getPlayer(Alliance.BLACK).isGameOver() ||
+				   	   moveTransition.getTransitionBoard().getPlayer(Alliance.BLACK).isDraw()) break;
 				} else if(board.getCurrentPlayer().getAlliance().isBlack() && currentValue < lowestSeenValue) {
 					lowestSeenValue = currentValue;
 					bestMove = move;
-					if(moveTransition.getTransitionBoard().getPlayer(Alliance.WHITE).isGameOver()) break;
+					if(moveTransition.getTransitionBoard().getPlayer(Alliance.WHITE).isGameOver() ||
+				   	   moveTransition.getTransitionBoard().getPlayer(Alliance.WHITE).isDraw()) break;
 				}
 			}
 		}
+
+		System.out.println(this + ": " + bestMove);
 
 		final long executionTime = System.currentTimeMillis() - startTime;
 
@@ -68,7 +72,7 @@ public class AlphaBetaPruning implements MoveStrategy {
 	}
 
 	public int min(final Move moved, final Board board, final int depth, final int alpha, final int beta) {
-		if(depth == 0 || isEndGameScenario(board) || moved.isAttack()) {
+		if(depth == 0 || isEndGameScenario(board) || moved.isAttack() || isDrawGameScenario(board)) {
 			return this.boardEvaluator.evaluate(moved, board, depth);
 		}
 
@@ -85,7 +89,7 @@ public class AlphaBetaPruning implements MoveStrategy {
 	}
 
 	public int max(final Move moved, final Board board, final int depth, final int alpha, final int beta) {
-		if(depth == 0 || isEndGameScenario(board) || moved.isAttack()) {
+		if(depth == 0 || isEndGameScenario(board) || moved.isAttack() || isDrawGameScenario(board)) {
 			return this.boardEvaluator.evaluate(moved, board, depth);
 		}
 
@@ -103,6 +107,10 @@ public class AlphaBetaPruning implements MoveStrategy {
 
 	private static boolean isEndGameScenario(final Board board) {
 		return board.getCurrentPlayer().isGameOver();
+	}
+
+	private static boolean isDrawGameScenario(final Board board) {
+		return board.getCurrentPlayer().isDraw();
 	}
 
 	private static boolean hasAttackMoves(final Board board) {
