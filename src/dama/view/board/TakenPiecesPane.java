@@ -10,13 +10,14 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.image.Image;
 import javafx.geometry.Rectangle2D;
+import javafx.geometry.Pos;
 
 import java.util.Collections;
 import java.util.List;
@@ -36,7 +37,7 @@ public class TakenPiecesPane extends BorderPane {
 		this.tileSize = TAKEN_PIECES_TILE_SIZE;
 		this.takenPieces = new TakenPieces(this.tileSize, this.alliance);
 		this.playerProfile = new PlayerProfile(this.tileSize, this.alliance);
-		this.setStyle("-fx-background-color: #373739;");
+		this.setStyle("-fx-background-color: #72716B;");
 		this.setupPane();
 	}
 
@@ -109,6 +110,7 @@ public class TakenPiecesPane extends BorderPane {
 		private final int tileSize;
 		private final Alliance alliance;
 		private final Label playerLabel;
+		private final StackPane playerLabelStack;
 
 		public PlayerProfile(final int tileSize, final Alliance alliance) {
 			this.tileSize = tileSize;
@@ -118,16 +120,14 @@ public class TakenPiecesPane extends BorderPane {
 			this.profile.setRadius(this.tileSize - 10);
 			this.profile.relocate(10, 10);
 			this.playerLabel = new Label(this.alliance.isWhite() ? "WHITE" : "BLACK");
-			this.playerLabel.setTextFill(Color.TRANSPARENT);
-			this.playerLabel.setStyle("-fx-font-size: 30; -fx-font-family: Century Gothic; -fx-font-weight: bolder;");
-			this.getChildren().addAll(this.profile, this.playerLabel);
-			Platform.runLater(new Runnable() {
-				@Override
-				public void run() {
-					playerLabel.setTextFill(Color.valueOf("#999"));
-					playerLabel.relocate(tileSize - ((int)(tileSize / 2) - 3), tileSize - 20);
-				}
-			});
+			this.playerLabel.setTextFill(Color.valueOf("#888"));
+			this.playerLabel.setStyle("-fx-font-size: 30; -fx-font-family: Garamond;");
+			this.playerLabelStack = new StackPane();
+			this.playerLabelStack.setPrefSize(this.tileSize * 2, this.tileSize * 2);
+			this.playerLabelStack.relocate(0, 0);
+			this.playerLabelStack.getChildren().add(this.playerLabel);
+			this.playerLabelStack.setAlignment(Pos.CENTER);
+			this.getChildren().addAll(this.profile, this.playerLabelStack);
 		}
 
 		public void update(final Board board) {

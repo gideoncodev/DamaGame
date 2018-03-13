@@ -16,7 +16,7 @@ import javafx.scene.input.MouseEvent;
 public class DamaMenu extends MenuBar {
 
 	public DamaMenu() {
-		this.setStyle("-fx-font-size: 16;");
+		this.setStyle("-fx-font-size: 18; -fx-font-family: Georgia;");
 		this.getMenus().addAll(createFileMenu(), createEditMenu(), createAboutMenu());
 	}
 

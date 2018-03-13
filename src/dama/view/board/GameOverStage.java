@@ -29,6 +29,16 @@ public class GameOverStage extends Stage {
 		this.initModality(Modality.WINDOW_MODAL);
 		this.setScene(new Scene(new GameOverParentPane(this)));
 		this.sizeToScene();
+		final double mainStageX = this.getOwner().getX() + this.getOwner().getWidth()/2d;
+		final double mainStageY = this.getOwner().getY() + this.getOwner().getHeight()/2d;
+		this.setOnShowing(e -> {
+			hide();
+		});
+		this.setOnShown(e -> {
+			setX(mainStageX - getWidth()/2d);
+			setY(mainStageY - getHeight()/2d);
+			show();
+		});
 		this.show();
 	}
 
@@ -68,7 +78,7 @@ public class GameOverStage extends Stage {
 		private void createWinningLabel() {
 			this.winningLabel.setText(GameBoard.get().getBoardPane().getBoard().getCurrentPlayer().getOpponent() + " Player WINS!!!");
 			this.winningLabel.setTextFill(Color.valueOf("#EBE7DB"));
-			this.winningLabel.setStyle("-fx-font-size: 35; -fx-font-family: Tahoma;");
+			this.winningLabel.setStyle("-fx-font-size: 35; -fx-font-family: Georgia;");
 		}
 
 		private void createWinningIcon() {
@@ -97,18 +107,18 @@ public class GameOverStage extends Stage {
 		private void createAdditionalInfo() {
 			this.additionalInfo.setText("Would you like to start a New Game?");
 			this.additionalInfo.setTextFill(Color.valueOf("#EBE7DB"));
-			this.additionalInfo.setStyle("-fx-font-size: 18; -fx-font-family: Tahoma;");
+			this.additionalInfo.setStyle("-fx-font-size: 18; -fx-font-family: Georgia;");
 		}
 
 		private void createButtons(final Stage stage) {
 			final Button yesButton = new Button("Yes");
 			yesButton.setCursor(Cursor.HAND);
 			yesButton.setTextFill(Color.valueOf("#EBE7DB"));
-			yesButton.setStyle("-fx-font-size: 20; -fx-font-family: Tahoma; -fx-background-color: #373739; -fx-border-color: #EBE7DB; -fx-border-width: 3; -fx-border-radius: 50; -fx-background-radius: 50;");
+			yesButton.setStyle("-fx-font-size: 20; -fx-font-family: Georgia; -fx-background-color: #373739; -fx-border-color: #EBE7DB; -fx-border-width: 3; -fx-border-radius: 50; -fx-background-radius: 50;");
 			final Button noButton = new Button("No");
 			noButton.setCursor(Cursor.HAND);
 			noButton.setTextFill(Color.valueOf("#EBE7DB"));
-			noButton.setStyle("-fx-font-size: 20; -fx-font-family: Tahoma; -fx-background-color: #373739; -fx-border-color: #EBE7DB; -fx-border-width: 3; -fx-border-radius: 50; -fx-background-radius: 50;");
+			noButton.setStyle("-fx-font-size: 20; -fx-font-family: Georgia; -fx-background-color: #373739; -fx-border-color: #EBE7DB; -fx-border-width: 3; -fx-border-radius: 50; -fx-background-radius: 50;");
 
 			//Actions
 			yesButton.setOnMouseClicked(e -> {
@@ -117,21 +127,21 @@ public class GameOverStage extends Stage {
 			});
 			yesButton.setOnMouseEntered(e -> {
 				yesButton.setTextFill(Color.valueOf("#373739"));
-				yesButton.setStyle("-fx-font-size: 20; -fx-font-family: Tahoma; -fx-background-color: #EBE7DB; -fx-border-color: #EBE7DB; -fx-border-width: 3; -fx-border-radius: 50; -fx-background-radius: 50;");
+				yesButton.setStyle("-fx-font-size: 20; -fx-font-family: Georgia; -fx-background-color: #EBE7DB; -fx-border-color: #EBE7DB; -fx-border-width: 3; -fx-border-radius: 50; -fx-background-radius: 50;");
 			});
 			yesButton.setOnMouseExited(e -> {
 				yesButton.setTextFill(Color.valueOf("#EBE7DB"));
-				yesButton.setStyle("-fx-font-size: 20; -fx-font-family: Tahoma; -fx-background-color: #373739; -fx-border-color: #EBE7DB; -fx-border-width: 3; -fx-border-radius: 50; -fx-background-radius: 50;");
+				yesButton.setStyle("-fx-font-size: 20; -fx-font-family: Georgia; -fx-background-color: #373739; -fx-border-color: #EBE7DB; -fx-border-width: 3; -fx-border-radius: 50; -fx-background-radius: 50;");
 			});
 
 			noButton.setOnMouseClicked(e -> Platform.exit());
 			noButton.setOnMouseEntered(e -> {
 				noButton.setTextFill(Color.valueOf("#373739"));
-				noButton.setStyle("-fx-font-size: 20; -fx-font-family: Tahoma; -fx-background-color: #EBE7DB; -fx-border-color: #EBE7DB; -fx-border-width: 3; -fx-border-radius: 50; -fx-background-radius: 50;");
+				noButton.setStyle("-fx-font-size: 20; -fx-font-family: Georgia; -fx-background-color: #EBE7DB; -fx-border-color: #EBE7DB; -fx-border-width: 3; -fx-border-radius: 50; -fx-background-radius: 50;");
 			});
 			noButton.setOnMouseExited(e -> {
 				noButton.setTextFill(Color.valueOf("#EBE7DB"));
-				noButton.setStyle("-fx-font-size: 20; -fx-font-family: Tahoma; -fx-background-color: #373739; -fx-border-color: #EBE7DB; -fx-border-width: 3; -fx-border-radius: 50; -fx-background-radius: 50;");
+				noButton.setStyle("-fx-font-size: 20; -fx-font-family: Georgia; -fx-background-color: #373739; -fx-border-color: #EBE7DB; -fx-border-width: 3; -fx-border-radius: 50; -fx-background-radius: 50;");
 			});
 
 			this.additionalButtons.setPadding(new Insets(10));

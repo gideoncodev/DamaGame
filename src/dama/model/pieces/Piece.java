@@ -70,7 +70,7 @@ public abstract class Piece {
 
 	public enum PieceType {
 
-		DAMA(50, "D") {
+		DAMA(100, "D") {
 			@Override
 			public boolean isKingDama() {
 				return false;

@@ -12,12 +12,6 @@ public enum MoveStatus {
 		public boolean isDone() {
 			return false;
 		}
-	},
-	LEAVE_PLAYER_IN_CHECK {
-		@Override
-		public boolean isDone() {
-			return false;
-		}
 	};
 
 	public abstract boolean isDone();

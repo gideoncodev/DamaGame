@@ -18,7 +18,6 @@ public class AlphaBetaPruning implements MoveStrategy {
 	private final int searchDepth;
 
 	public AlphaBetaPruning(final int searchDepth) {
-		this.toString();
 		this.boardEvaluator = StandardBoardEvaluator.get();
 		this.searchDepth = searchDepth;
 	}
@@ -49,7 +48,6 @@ public class AlphaBetaPruning implements MoveStrategy {
 				currentValue = board.getCurrentPlayer().getAlliance().isWhite() ? 
 							   this.min(move, moveTransition.getTransitionBoard(), this.searchDepth - 1, highestSeenValue, lowestSeenValue) :
 							   this.max(move, moveTransition.getTransitionBoard(), this.searchDepth - 1, highestSeenValue, lowestSeenValue);
-				System.out.println(currentValue);
 				if(board.getCurrentPlayer().getAlliance().isWhite() && currentValue > highestSeenValue) {
 				   	highestSeenValue = currentValue;
 				   	bestMove = move;
@@ -64,15 +62,13 @@ public class AlphaBetaPruning implements MoveStrategy {
 			}
 		}
 
-		System.out.println(this + ": " + bestMove);
-
 		final long executionTime = System.currentTimeMillis() - startTime;
 
 		return bestMove;
 	}
 
 	public int min(final Move moved, final Board board, final int depth, final int alpha, final int beta) {
-		if(depth == 0 || isEndGameScenario(board) || moved.isAttack() || isDrawGameScenario(board)) {
+		if(depth == 0 || isEndGameScenario(board) || moved.isAttack()) {
 			return this.boardEvaluator.evaluate(moved, board, depth);
 		}
 
@@ -89,7 +85,7 @@ public class AlphaBetaPruning implements MoveStrategy {
 	}
 
 	public int max(final Move moved, final Board board, final int depth, final int alpha, final int beta) {
-		if(depth == 0 || isEndGameScenario(board) || moved.isAttack() || isDrawGameScenario(board)) {
+		if(depth == 0 || isEndGameScenario(board) || moved.isAttack()) {
 			return this.boardEvaluator.evaluate(moved, board, depth);
 		}
 

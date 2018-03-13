@@ -26,6 +26,16 @@ public class AboutDama extends Stage {
 		this.initModality(Modality.WINDOW_MODAL);
 		this.setScene(new Scene(new AboutPane(this)));
 		this.sizeToScene();
+		final double mainStageX = this.getOwner().getX() + this.getOwner().getWidth()/2d;
+		final double mainStageY = this.getOwner().getY() + this.getOwner().getHeight()/2d;
+		this.setOnShowing(e -> {
+			hide();
+		});
+		this.setOnShown(e -> {
+			setX(mainStageX - getWidth()/2d);
+			setY(mainStageY - getHeight()/2d);
+			show();
+		});
 		this.show();
 	}
 
@@ -85,23 +95,23 @@ public class AboutDama extends Stage {
 		private void createAboutDama() {
 			final Label dama = new Label("DAMA");
 			dama.setTextFill(Color.valueOf("#EBE7DB"));
-			dama.setStyle("-fx-font-size: 60; -fx-font-family: Tahoma;");
+			dama.setStyle("-fx-font-size: 60; -fx-font-family: Georgia;");
 			final Label description = new Label("(Filipino Checkers)");
 			description.setTextFill(Color.valueOf("#EBE7DB"));
-			description.setStyle("-fx-font-size: 20; -fx-font-family: Tahoma;");
+			description.setStyle("-fx-font-size: 20; -fx-font-family: Georgia;");
 			final Label description2 = new Label("Player VS Computer");
 			description2.setTextFill(Color.valueOf("#EBE7DB"));
-			description2.setStyle("-fx-font-size: 20; -fx-font-family: Tahoma;");
+			description2.setStyle("-fx-font-size: 20; -fx-font-family: Georgia;");
 
 			final Label createdBy = new Label("Created by: Gideon M. Arces Jr.");
 			createdBy.setTextFill(Color.valueOf("#EBE7DB"));
-			createdBy.setStyle("-fx-font-size: 20; -fx-font-family: Tahoma;");
+			createdBy.setStyle("-fx-font-size: 20; -fx-font-family: Georgia;");
 			final Label createYear = new Label("SY: 2017 - 2018");
 			createYear.setTextFill(Color.valueOf("#EBE7DB"));
-			createYear.setStyle("-fx-font-size: 20; -fx-font-family: Tahoma;");
+			createYear.setStyle("-fx-font-size: 20; -fx-font-family: Georgia;");
 			final Label createSchool = new Label("Visayas State University");
 			createSchool.setTextFill(Color.valueOf("#EBE7DB"));
-			createSchool.setStyle("-fx-font-size: 20; -fx-font-family: Tahoma;");
+			createSchool.setStyle("-fx-font-size: 20; -fx-font-family: Georgia;");
 
 			this.aboutDama.setPrefSize(500, 250);
 			this.aboutDama.getChildren().addAll(dama, 

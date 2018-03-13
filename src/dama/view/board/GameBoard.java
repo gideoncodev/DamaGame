@@ -53,6 +53,8 @@ public class GameBoard extends BorderPane {
 	private final TakenPiecesPane whiteTakenPiecesPane;
 	private final TakenPiecesPane blackTakenPiecesPane;
 	private final MoveLog moveLog;
+
+	//Player types
 	private final PlayerType whitePlayerType = PlayerType.HUMAN;
 	private final PlayerType blackPlayerType = PlayerType.COMPUTER;
 
@@ -76,7 +78,9 @@ public class GameBoard extends BorderPane {
 					createGameOverAlert();
 				}
 
-				if(GameBoard.get().isAIPlayer(newBoard.getCurrentPlayer().getAlliance())) {					
+				if(!(GameBoard.get().getBoardProperty().getValue().getCurrentPlayer().isGameOver() || 
+			   	   	GameBoard.get().getBoardPane().getBoard().getCurrentPlayer().getLegalMoves().isEmpty()) && 
+					GameBoard.get().isAIPlayer(newBoard.getCurrentPlayer().getAlliance())) {					
 					final Thread th = new Thread(new AIThink(newBoard));
 					th.setDaemon(true);
 					th.start();
@@ -203,8 +207,6 @@ public class GameBoard extends BorderPane {
 		@Override
 		protected void succeeded() {
 			final Move bestMove = getValue();
-			System.out.println(bestMove);
-			System.out.println(GameBoard.get().getBoardPane().getBoard());
 			GameBoard.get().getMoveLog().addUndoMoves(bestMove, GameBoard.get().getBoardPane().getBoard());
 			GameBoard.get().getBoardPane().updateComputerMove(bestMove);
 			GameBoard.get().getBoardPane().setBoard(this.board.getCurrentPlayer().makeMove(bestMove).getTransitionBoard());

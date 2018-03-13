@@ -21,7 +21,8 @@ public class TileEventHandler implements EventHandler<MouseEvent> {
 
 	@Override
 	public void handle(final MouseEvent mouseEvent) {
-		if(mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+		if(mouseEvent.getButton().equals(MouseButton.PRIMARY) && 
+		   !GameBoard.get().isAIPlayer(GameBoard.get().getBoardPane().getBoard().getCurrentPlayer().getAlliance())) {
 			if(GameBoard.get().getBoardPane().getSourceTile() == null) {
 				GameBoard.get().getBoardPane().setSourceTile(GameBoard.get().getBoardPane().getBoard().getTile(this.tileIcon.getTileId()));
 				GameBoard.get().getBoardPane().setSelectedPiece(GameBoard.get().getBoardPane().getSourceTile().getPiece());

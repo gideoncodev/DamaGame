@@ -101,7 +101,9 @@ public class TileIcon extends Pane {
 			if(move.getDestinationCoordinate() == this.tileId) {
 				this.selectedPieceLegalMoves.add(move);
 				this.setCursor(Cursor.HAND);
-				this.getChildren().add(new PieceHighlightIcon(TILE_SIZE, this.boardPane.getSelectedPiece().getPieceAlliance()));
+				final String fillColorValue = (this.boardPane.getComputerMove() != null && 
+											   this.tileId == this.boardPane.getComputerMove().getCurrentCoordinate()) ? "#D45252" : "#582";
+				this.getChildren().add(new PieceHighlightIcon(fillColorValue, TILE_SIZE, this.boardPane.getSelectedPiece().getPieceAlliance()));
 			}
 		}
 	}
