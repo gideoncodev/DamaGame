@@ -4,6 +4,7 @@ import dama.model.Alliance;
 import dama.model.board.Board;
 import dama.model.board.BoardUtils;
 import dama.model.board.Move;
+import dama.model.board.MoveLog;
 import dama.model.board.Tile;
 import dama.model.pieces.Piece;
 import dama.model.player.ai.MiniMax;
@@ -53,8 +54,6 @@ public class GameBoard extends BorderPane {
 	private final TakenPiecesPane whiteTakenPiecesPane;
 	private final TakenPiecesPane blackTakenPiecesPane;
 	private final MoveLog moveLog;
-
-	//Player types
 	private final PlayerType whitePlayerType = PlayerType.HUMAN;
 	private final PlayerType blackPlayerType = PlayerType.COMPUTER;
 
